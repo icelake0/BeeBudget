@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656315414156",
+    "project_id": "bee-budget",
+    "storage_bucket": "bee-budget.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656315414156:android:444292621a0946f95b2da9",
+        "android_client_info": {
+          "package_name": "com.C2479785.beebudget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsKvL_3xgMPzs8R5-GC1BH65_YKUCIicU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
