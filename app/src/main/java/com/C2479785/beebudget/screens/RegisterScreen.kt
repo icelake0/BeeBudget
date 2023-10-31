@@ -1,4 +1,4 @@
-package com.C2479785.beebudget.pages
+package com.C2479785.beebudget.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,17 +16,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.C2479785.beebudget.components.BeeBudgetFullLogo
 import com.C2479785.beebudget.components.InputField
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 
 @Composable
-fun LoginPage() {
+fun RegisterScreen() {
+    val firstName = rememberSaveable { mutableStateOf("") }
+
+    val lastName = rememberSaveable { mutableStateOf("") }
+
     val email = rememberSaveable { mutableStateOf("") }
 
     val password = rememberSaveable { mutableStateOf("") }
+
+    val confirmPassword = rememberSaveable { mutableStateOf("") }
 
     Surface( modifier = Modifier
         .fillMaxWidth()
@@ -36,6 +41,20 @@ fun LoginPage() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
             BeeBudgetFullLogo()
+            InputField(
+                valueState = firstName, labelId = "first name",
+                enabled = true,
+                onAction = KeyboardActions {
+                },
+            )
+
+            InputField(
+                valueState = lastName, labelId = "last name",
+                enabled = true,
+                onAction = KeyboardActions {
+                },
+            )
+
             InputField(
                 valueState = email, labelId = "email",
                 enabled = true,
@@ -51,17 +70,25 @@ fun LoginPage() {
                 },
             )
 
+            InputField(
+                valueState = confirmPassword, labelId = "confirm password",
+                enabled = true,
+                visualTransformation = PasswordVisualTransformation(),
+                onAction = KeyboardActions {
+                },
+            )
+
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
                 onClick = { /*TODO*/ },
                 modifier = Modifier.fillMaxWidth(),
-                content = { Text(text = "Login") },
+                content = { Text(text = "Register") },
             )
-            Text(text = "Don't have an account yet?")
+            Text(text = "Already have an account?")
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                content = { Text(text = "Register") },
-                onClick = { /*TODO*/ }
+                onClick = { /*TODO*/ },
+                content = { Text(text = "Login") }
             )
         }
 

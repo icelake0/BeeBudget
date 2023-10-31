@@ -9,32 +9,51 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.C2479785.beebudget.pages.LoginPage
-import com.C2479785.beebudget.pages.RegisterPage
+import com.C2479785.beebudget.navagation.AppNavigation
+import com.C2479785.beebudget.screens.LoginScreen
+import com.C2479785.beebudget.screens.MainScreen
+import com.C2479785.beebudget.screens.RegisterScreen
 import com.C2479785.beebudget.ui.theme.BeeBudgetTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BeeBudgetTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    RegisterPage()
-                }
+            App {
+                MainScreen()
             }
+//            BeeBudgetTheme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    RegisterScreen()
+//                }
+//            }
         }
+    }
+}
+
+@Composable
+fun App(content: @Composable () -> Unit) {
+    BeeBudgetTheme {
+        content()
     }
 }
 
 @Preview(showBackground = true)
 @Composable
+fun MainPreview() {
+    App {
+        MainScreen()
+    }
+}
+@Preview(showBackground = true)
+@Composable
 fun LoginPagePreview() {
     BeeBudgetTheme {
-        LoginPage()
+        LoginScreen()
     }
 }
 
@@ -42,6 +61,6 @@ fun LoginPagePreview() {
 @Composable
 fun RegisterPagePreview() {
     BeeBudgetTheme {
-        RegisterPage()
+        RegisterScreen()
     }
 }

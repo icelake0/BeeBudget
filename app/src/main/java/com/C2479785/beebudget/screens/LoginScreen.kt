@@ -1,4 +1,4 @@
-package com.C2479785.beebudget.pages
+package com.C2479785.beebudget.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,16 +22,10 @@ import com.C2479785.beebudget.components.InputField
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 
 @Composable
-fun RegisterPage() {
-    val firstName = rememberSaveable { mutableStateOf("") }
-
-    val lastName = rememberSaveable { mutableStateOf("") }
-
+fun LoginScreen() {
     val email = rememberSaveable { mutableStateOf("") }
 
     val password = rememberSaveable { mutableStateOf("") }
-
-    val confirmPassword = rememberSaveable { mutableStateOf("") }
 
     Surface( modifier = Modifier
         .fillMaxWidth()
@@ -41,20 +35,6 @@ fun RegisterPage() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
             BeeBudgetFullLogo()
-            InputField(
-                valueState = firstName, labelId = "first name",
-                enabled = true,
-                onAction = KeyboardActions {
-                },
-            )
-
-            InputField(
-                valueState = lastName, labelId = "last name",
-                enabled = true,
-                onAction = KeyboardActions {
-                },
-            )
-
             InputField(
                 valueState = email, labelId = "email",
                 enabled = true,
@@ -70,25 +50,17 @@ fun RegisterPage() {
                 },
             )
 
-            InputField(
-                valueState = confirmPassword, labelId = "confirm password",
-                enabled = true,
-                visualTransformation = PasswordVisualTransformation(),
-                onAction = KeyboardActions {
-                },
-            )
-
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
                 onClick = { /*TODO*/ },
                 modifier = Modifier.fillMaxWidth(),
-                content = { Text(text = "Register") },
+                content = { Text(text = "Login") },
             )
-            Text(text = "Already have an account?")
+            Text(text = "Don't have an account yet?")
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                onClick = { /*TODO*/ },
-                content = { Text(text = "Login") }
+                content = { Text(text = "Register") },
+                onClick = { /*TODO*/ }
             )
         }
 
