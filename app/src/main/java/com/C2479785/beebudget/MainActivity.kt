@@ -9,8 +9,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.C2479785.beebudget.pages.LoginPage
-import com.C2479785.beebudget.pages.RegisterPage
+import com.C2479785.beebudget.navagation.AppNavigation
+import com.C2479785.beebudget.screens.LoginScreen
+import com.C2479785.beebudget.screens.RegisterScreen
 import com.C2479785.beebudget.ui.theme.BeeBudgetTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,12 +19,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BeeBudgetTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RegisterPage()
+                    AppNavigation()
                 }
             }
         }
@@ -32,16 +32,8 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPagePreview() {
+fun DefaultPreview() {
     BeeBudgetTheme {
-        LoginPage()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterPagePreview() {
-    BeeBudgetTheme {
-        RegisterPage()
+        AppNavigation()
     }
 }
