@@ -1,4 +1,4 @@
-package com.C2479785.beebudget.pages
+package com.C2479785.beebudget.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.C2479785.beebudget.components.BeeBudgetFullLogo
 import com.C2479785.beebudget.components.InputField
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 
 @Composable
-fun RegisterPage() {
+fun RegisterScreen(navController : NavController) {
     val firstName = rememberSaveable { mutableStateOf("") }
 
     val lastName = rememberSaveable { mutableStateOf("") }
