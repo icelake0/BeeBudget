@@ -5,18 +5,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.C2479785.beebudget.navigation.AppScreens
-import com.C2479785.beebudget.screens.BudgetScreen
-import com.C2479785.beebudget.screens.DashboardScreen
-import com.C2479785.beebudget.screens.ExpenseScreen
+import com.C2479785.beebudget.screens.budget.BudgetScreen
+import com.C2479785.beebudget.screens.dashboard.DashboardScreen
+import com.C2479785.beebudget.screens.expense.ExpenseScreen
 import com.C2479785.beebudget.screens.login.LoginScreen
 import com.C2479785.beebudget.screens.register.RegisterScreen
-import com.C2479785.beebudget.screens.SplashScreen
+import com.C2479785.beebudget.screens.splash.SplashScreen
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController,
-        startDestination = AppScreens.LoginScreen.name ) {
+        startDestination = AppScreens.SplashScreen.name ) {
 
         composable(AppScreens.SplashScreen.name){
             SplashScreen(navController = navController)
