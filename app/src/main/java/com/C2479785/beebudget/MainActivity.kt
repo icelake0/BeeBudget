@@ -10,8 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.C2479785.beebudget.navagation.AppNavigation
-import com.C2479785.beebudget.screens.LoginScreen
-import com.C2479785.beebudget.screens.RegisterScreen
+import com.C2479785.beebudget.screens.register.RegisterScreen
 import com.C2479785.beebudget.ui.theme.BeeBudgetTheme
 
 class MainActivity : ComponentActivity() {

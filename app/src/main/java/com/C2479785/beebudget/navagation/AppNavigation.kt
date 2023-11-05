@@ -9,7 +9,7 @@ import com.C2479785.beebudget.screens.BudgetScreen
 import com.C2479785.beebudget.screens.DashboardScreen
 import com.C2479785.beebudget.screens.ExpenseScreen
 import com.C2479785.beebudget.screens.LoginScreen
-import com.C2479785.beebudget.screens.RegisterScreen
+import com.C2479785.beebudget.screens.register.RegisterScreen
 import com.C2479785.beebudget.screens.SplashScreen
 
 @Composable
