@@ -1,6 +1,7 @@
 package com.C2479785.beebudget.screens.register
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,6 +34,7 @@ fun RegisterScreen(
     navController : NavController,
     viewModel: RegisterScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val context = LocalContext.current
 
     val firstName = rememberSaveable { mutableStateOf("") }
     val firstNameIsValid = remember(firstName.value) { firstName.value.trim().isNotEmpty() }
@@ -47,7 +50,7 @@ fun RegisterScreen(
 
     val confirmPassword = rememberSaveable { mutableStateOf("") }
     val confirmPasswordIsValid = remember(confirmPassword.value, password.value) {
-        confirmPassword.value.trim().isNotEmpty() && password.value != confirmPassword.value
+        confirmPassword.value.trim().isNotEmpty() && password.value == confirmPassword.value
     }
 
     val loading by viewModel.loading.observeAsState(initial = false)
@@ -108,7 +111,10 @@ fun RegisterScreen(
                 onClick = {
                     viewModel.createUser(
                         email.value, password.value,
-                        firstName.value,  lastName.value
+                        firstName.value,  lastName.value,
+                        {message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        },
                     ){
                         navController.navigate(AppScreens.DashboardScreen.name)
                     }

@@ -8,7 +8,7 @@ import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.screens.BudgetScreen
 import com.C2479785.beebudget.screens.DashboardScreen
 import com.C2479785.beebudget.screens.ExpenseScreen
-import com.C2479785.beebudget.screens.LoginScreen
+import com.C2479785.beebudget.screens.login.LoginScreen
 import com.C2479785.beebudget.screens.register.RegisterScreen
 import com.C2479785.beebudget.screens.SplashScreen
 
@@ -16,7 +16,7 @@ import com.C2479785.beebudget.screens.SplashScreen
 fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController,
-        startDestination = AppScreens.RegisterScreen.name ) {
+        startDestination = AppScreens.LoginScreen.name ) {
 
         composable(AppScreens.SplashScreen.name){
             SplashScreen(navController = navController)

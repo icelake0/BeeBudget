@@ -15,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class RegisterScreenViewModel: ViewModel() {
+class LoginScreenViewModel: ViewModel() {
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -23,32 +23,18 @@ class RegisterScreenViewModel: ViewModel() {
 
     val loading: LiveData<Boolean> = _loading
 
-    fun createUser(
+    fun loginUser(
         email: String, password: String,
-        firstName: String, lastName: String,
-        errorCallback: (message : String?) -> Unit = {},
+        errorCallback: () -> Unit = {},
         successCallback: () -> Unit )  = viewModelScope.launch{
         try {
             if (_loading.value == false) {
                 _loading.value = true
-                auth.createUserWithEmailAndPassword(email, password).await()
-
-                val userId = auth.currentUser?.uid
-
-                val user = User(
-                    userId = userId.toString(),
-                    firstName = firstName.toString(),
-                    lastName = lastName.toString(),
-                    id = null
-                ).toMap()
-
-                FirebaseFirestore.getInstance().collection("users")
-                    .add(user)
-
+                auth.signInWithEmailAndPassword(email, password).await()
                 successCallback()
             }
         } catch (ex: Exception){
-            errorCallback(ex.message)
+            errorCallback();
         } finally {
             _loading.value = false
         }
