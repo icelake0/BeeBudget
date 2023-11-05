@@ -34,6 +34,7 @@ fun InputField(
         valueState: MutableState<String>,
         labelId: String,
         enabled: Boolean,
+        isError: Boolean = false,
         visualTransformation : VisualTransformation = VisualTransformation.None,
         isSingleLine: Boolean = true,
         keyboardType: KeyboardType = KeyboardType.Ascii,
@@ -47,6 +48,7 @@ fun InputField(
                 placeholder = { Text(text =  labelId) },
                 singleLine = isSingleLine,
                 enabled = enabled,
+                isError = isError,
                 visualTransformation = visualTransformation,
                 textStyle = TextStyle(
                         fontSize = 18.sp,

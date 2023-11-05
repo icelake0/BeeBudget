@@ -1,5 +1,6 @@
 package com.C2479785.beebudget.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.C2479785.beebudget.components.BeeBudgetFullLogo
 import com.C2479785.beebudget.components.InputField
+import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 
 @Composable
@@ -39,16 +41,12 @@ fun LoginScreen(navController : NavController) {
             InputField(
                 valueState = email, labelId = "email",
                 enabled = true,
-                onAction = KeyboardActions {
-                },
             )
 
             InputField(
                 valueState = password, labelId = "password",
                 enabled = true,
                 visualTransformation = PasswordVisualTransformation(),
-                onAction = KeyboardActions {
-                },
             )
 
             Button(
@@ -58,10 +56,13 @@ fun LoginScreen(navController : NavController) {
                 content = { Text(text = "Login") },
             )
             Text(text = "Don't have an account yet?")
-            Button(
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                content = { Text(text = "Register") },
-                onClick = { /*TODO*/ }
+            Text(
+                text = "Register",
+                color = PrimaryColor,
+                modifier = Modifier
+                    .clickable {
+                        navController.navigate(AppScreens.RegisterScreen.name)
+                    }
             )
         }
 
