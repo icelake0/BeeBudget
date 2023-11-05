@@ -1,4 +1,4 @@
-package com.C2479785.beebudget.screens
+package com.C2479785.beebudget.screens.expense
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 
 @Composable
-fun DashboardScreen(navController : NavController) {
+fun ExpenseScreen(navController : NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -19,7 +19,7 @@ fun DashboardScreen(navController : NavController) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Dashboard page"
+            text = "Expense page"
         )
     }
 }

@@ -53,8 +53,8 @@ fun LoginScreen(
         .fillMaxWidth()
         .fillMaxHeight())
     {
-        Column(modifier = Modifier.padding(6.dp),
-            verticalArrangement = Arrangement.Top,
+        Column(modifier = Modifier.padding(horizontal = 6.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
             BeeBudgetFullLogo()
             InputField(
