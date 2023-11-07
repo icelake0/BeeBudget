@@ -9,17 +9,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.C2479785.beebudget.navagation.NavigationItem
+import com.C2479785.beebudget.screens.layout.MainScreenLayout
 
 @Composable
 fun BudgetScreen(navController : NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Magenta),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Budget page"
-        )
+    MainScreenLayout(navController, NavigationItem.Budget) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Magenta),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Budget page"
+            )
+        }
     }
 }
