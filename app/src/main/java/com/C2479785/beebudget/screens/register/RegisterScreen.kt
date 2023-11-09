@@ -72,32 +72,32 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally) {
             BeeBudgetFullLogo()
             InputField(
-                valueState = firstName, labelId = "first name",
+                valueState = firstName, labelId = "First name",
                 enabled = !loading,
                 isError = !firstNameIsValid
             )
 
             InputField(
-                valueState = lastName, labelId = "last name",
+                valueState = lastName, labelId = "Last name",
                 enabled = !loading,
                 isError = !lastNameIsValid,
             )
 
             InputField(
-                valueState = email, labelId = "email",
+                valueState = email, labelId = "Email",
                 enabled = !loading,
                 isError = !emailIsValid,
             )
 
             InputField(
-                valueState = password, labelId = "password",
+                valueState = password, labelId = "Password",
                 enabled = !loading,
                 visualTransformation = PasswordVisualTransformation(),
                 isError = !passwordIsValid,
             )
 
             InputField(
-                valueState = confirmPassword, labelId = "confirm password",
+                valueState = confirmPassword, labelId = "Confirm password",
                 enabled = !loading,
                 visualTransformation = PasswordVisualTransformation(),
                 isError = !confirmPasswordIsValid,

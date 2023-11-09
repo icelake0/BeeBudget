@@ -1,8 +1,11 @@
 package com.C2479785.beebudget.screens.budget
 
 import android.graphics.drawable.shapes.Shape
+import android.os.Build
+import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -48,8 +52,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.C2479785.beebudget.components.BeeBudgetFullLogo
 import com.C2479785.beebudget.components.InputField
@@ -60,6 +66,7 @@ import com.C2479785.beebudget.screens.layout.MainScreenLayout
 import com.C2479785.beebudget.screens.register.RegisterScreenViewModel
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BudgetScreen(
     navController : NavController,
@@ -72,35 +79,77 @@ fun BudgetScreen(
                 .background(Color.Magenta),
             contentAlignment = Alignment.Center
         ) {
+            val context = LocalContext.current
+
+//            val validFloatNumberPattern = remember { Regex("^\\d*\\.\\d+|\\d+\\.\\d*$") }
+            val validWholeNumberPattern = remember { Regex("^\\d+\$") }
 
             val selectedMonth = remember { mutableStateOf(0) }
 
             val selectedYear = remember { mutableStateOf(0) }
 
             val subscriptions = rememberSaveable { mutableStateOf("") }
+            val subscriptionsIsValid = remember(subscriptions.value) { subscriptions.value.trim().isNotEmpty() }
 
             val food = rememberSaveable { mutableStateOf("") }
+            val foodIsValid = remember(food.value) { food.value.trim().isNotEmpty() }
 
             val groceries = rememberSaveable { mutableStateOf("") }
+            val groceriesIsValid = remember(groceries.value) { groceries.value.trim().isNotEmpty() }
 
             val transportation = rememberSaveable { mutableStateOf("") }
+            val transportationIsValid = remember(transportation.value) { transportation.value.trim().isNotEmpty() }
 
             val entertainment = rememberSaveable { mutableStateOf("") }
+            val entertainmentIsValid = remember(entertainment.value) { entertainment.value.trim().isNotEmpty() }
 
             val personalCare = rememberSaveable { mutableStateOf("") }
+            val personalCareIsValid = remember(personalCare.value) { personalCare.value.trim().isNotEmpty() }
 
             val others = rememberSaveable { mutableStateOf("") }
+            val othersIsValid = remember(others.value) { others.value.trim().isNotEmpty() }
 
-            val loading by viewModel.loading.observeAsState(initial = false)
-
-            val budgetFormIsvalid = remember(
+            val budgetFormIsValid = remember(
                 subscriptions.value, food.value,
                 groceries.value, transportation.value,
                 entertainment.value, personalCare.value,
                 others.value
             ) {
-                true
+                subscriptionsIsValid
+                        && foodIsValid
+                        && groceriesIsValid
+                        && transportationIsValid
+                        && entertainmentIsValid
+                        && personalCareIsValid
+                        && othersIsValid
             }
+
+            val loadedBudget by viewModel.loadedBudget.observeAsState(initial = false)
+
+            val loading by viewModel.loading.observeAsState(initial = false)
+
+            val currentBudget by viewModel.currentBudget.observeAsState(initial = null)
+
+            val updateBudgetFormFields = fun () {
+//                selectedMonth.value = currentBudget!!.month
+//                selectedYear.value = viewModel.years.indexOf((currentBudget!!.year).toString())
+                subscriptions.value = currentBudget!!.subscriptions.toString()
+                food.value = currentBudget!!.food.toString()
+                groceries.value = currentBudget!!.groceries.toString()
+                transportation.value =currentBudget!!.transportation.toString()
+                entertainment.value =currentBudget!!.entertainment.toString()
+                personalCare.value = currentBudget!!.personalCare.toString()
+                others.value = currentBudget!!.others.toString()
+            }
+
+            if(!loadedBudget){
+                viewModel.geBudgetForForm(errorCallback = {message ->
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }){
+                    updateBudgetFormFields()
+                }
+            }
+
             Surface( modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight())
@@ -111,26 +160,59 @@ fun BudgetScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
                         Row( ) {
+                            Spacer(modifier = Modifier.width(110.dp))
                             SelectInputField(
                                 title = "Month",
                                 options = viewModel.months,
-                                currentSelection = selectedMonth
+                                currentSelection = selectedMonth,
+                                onChange = {
+                                    viewModel.geBudgetForForm(
+                                        selectedMonth = selectedMonth.value,
+                                        selectedYear = selectedYear.value,
+                                        errorCallback = {message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    ) {
+                                        updateBudgetFormFields()
+                                    }
+                                }
                             )
+                            Spacer(modifier = Modifier.width(5.dp))
                             SelectInputField(
                                 title = "Year",
                                 options = viewModel.years,
-                                currentSelection = selectedYear
+                                currentSelection = selectedYear,
+                                onChange = {
+                                    viewModel.geBudgetForForm(
+                                        selectedMonth = selectedMonth.value,
+                                        selectedYear = selectedYear.value,
+                                        errorCallback = {message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    ) {
+                                        updateBudgetFormFields()
+                                    }
+                                }
                             )
                         }
 
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = subscriptions, labelId = "Subscriptions",
                         leadingIcon = { Icon(Icons.Default.Refresh,  contentDescription = "", tint = PrimaryColor)},
+                        onValueChange = {
+                            if (it.isEmpty() || it.matches(validWholeNumberPattern)) {
+                                //TODO Implement support for penny budgeting
+                                //|| it.matches(validFloatNumberPattern)
+                                subscriptions.value = it
+                            }
+                        },
                         enabled = !loading,
                         isError = false
                     )
 
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = food, labelId = "Food",
                         leadingIcon = { Icon(Icons.Default.Favorite,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
@@ -138,6 +220,7 @@ fun BudgetScreen(
                     )
 
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = groceries, labelId = "Groceries",
                         leadingIcon = { Icon(Icons.Default.ShoppingCart,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
@@ -145,6 +228,7 @@ fun BudgetScreen(
                     )
 
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = transportation, labelId = "Transportation",
                         leadingIcon = { Icon(Icons.Default.Send,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
@@ -152,18 +236,21 @@ fun BudgetScreen(
                     )
 
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = entertainment, labelId = "Entertainment",
                         leadingIcon = { Icon(Icons.Default.Star,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
                         isError = false,
                     )
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = personalCare, labelId = "Personal Care",
                         leadingIcon = { Icon(Icons.Default.Face,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
                         isError = false,
                     )
                     InputField(
+                        keyboardType = KeyboardType.Number,
                         valueState = others, labelId = "Others",
                         leadingIcon = { Icon(Icons.Default.Add,  contentDescription = "", tint = PrimaryColor)},
                         enabled = !loading,
@@ -172,11 +259,28 @@ fun BudgetScreen(
 
                     Button(
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                        enabled = !loading && budgetFormIsvalid,
+                        enabled = !loading && budgetFormIsValid,
                         modifier = Modifier.fillMaxWidth(),
-                        content = { Text(text = "Save Budget") },
+                        content = { Text(text = "Update Budget") },
                         onClick = {
-
+                            viewModel.updateBudget(
+                                month = selectedMonth.value,
+                                year = selectedYear.value,
+                                subscriptions = subscriptions.value.toInt(),
+                                food = food.value.toInt(),
+                                groceries = groceries.value.toInt(),
+                                transportation = transportation.value.toInt(),
+                                entertainment = entertainment.value.toInt(),
+                                personalCare = personalCare.value.toInt(),
+                                others = others.value.toInt(),
+                                {message ->
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                },
+                            ){
+                                Toast.makeText(context,
+                                    "Budget Updated successfully",
+                                    Toast.LENGTH_SHORT).show()
+                            }
                         },
                     )
                 }

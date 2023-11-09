@@ -58,12 +58,12 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally) {
             BeeBudgetFullLogo()
             InputField(
-                valueState = email, labelId = "email",
+                valueState = email, labelId = "Email",
                 enabled = true,
             )
 
             InputField(
-                valueState = password, labelId = "password",
+                valueState = password, labelId = "Password",
                 enabled = true,
                 visualTransformation = PasswordVisualTransformation(),
             )
