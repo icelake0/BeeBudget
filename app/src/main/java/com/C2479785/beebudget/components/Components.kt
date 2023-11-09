@@ -5,17 +5,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -54,11 +60,12 @@ fun InputField(
         isSingleLine: Boolean = true,
         keyboardType: KeyboardType = KeyboardType.Ascii,
         imeAction: ImeAction = ImeAction.Next,
-        onAction: KeyboardActions = KeyboardActions.Default
+        onAction: KeyboardActions = KeyboardActions.Default,
+        onValueChange: (String) -> Unit = { valueState.value = it },
 ){
         OutlinedTextField(
                 value = valueState.value,
-                onValueChange = { valueState.value = it },
+                onValueChange = onValueChange,
                 label = { Text(text =  labelId) },
                 placeholder = { Text(text =  labelId) },
                 leadingIcon = leadingIcon,
@@ -73,7 +80,10 @@ fun InputField(
                 modifier = modifier
                         .padding(bottom = 10.dp, start = 10.dp, end = 10.dp)
                         .fillMaxWidth(),
-                keyboardActions = onAction
+                keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = keyboardType
+                ),
+                keyboardActions = onAction,
         )
 }
 
@@ -120,31 +130,50 @@ fun BeeBudgetFullLogo() {
 ////////Select component /////
 
 @Composable
-fun SelectInputField(title: String, options : List<String>, currentSelection: MutableState<Int>) {
+fun SelectInputField(
+        title: String, options : List<String>,
+        currentSelection: MutableState<Int>,
+        onChange: () -> Unit = {}
+) {
         val showSelect = remember { mutableStateOf(false) }
         OutlinedButton(
                 colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = PrimaryColor
+                        contentColor = Color.DarkGray
                 ),
                 onClick = { showSelect.value = true }
         ) {
+                Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "drawable icons",
+                        tint = PrimaryColor
+                )
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(options[currentSelection.value])
                 if (showSelect.value) {
                         AlertSingleChoicer(
                                 state = showSelect,
                                 selectedOption = currentSelection,
                                 title = "Select $title",
-                                options = options
+                                options = options,
+                                onChange = onChange
                         )
                 }
         }
 }
 
 @Composable
-fun AlertSingleChoicer(state: MutableState<Boolean>, title: String , selectedOption: MutableState<Int>, options : List<String>) {
+fun AlertSingleChoicer(
+        state: MutableState<Boolean>, title: String ,
+        selectedOption: MutableState<Int>, options : List<String>,
+        onChange: () -> Unit = {}
+) {
         val selectedInputOption =  remember { mutableStateOf(selectedOption.value) }
-        CommonDialog(title = title, state = state, selectedInputOption, selectedOption) {
+        CommonDialog(
+                title = title, state = state,
+                selectedInputOption, selectedOption,
+                onChange= onChange
+        ) {
                 SingleChoiceView(selectedInputOption, options)
         }
 }
@@ -156,6 +185,7 @@ fun CommonDialog(
         state: MutableState<Boolean>,
         selectedInputOption: MutableState<Int>,
         selectedOption: MutableState<Int>,
+        onChange: () -> Unit = {},
         content: @Composable (() -> Unit)? = null
 ) {
         AlertDialog(
@@ -188,6 +218,7 @@ fun CommonDialog(
                                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
                                 onClick = {
                                         selectedOption.value = selectedInputOption.value
+                                        onChange()
                                         state.value = false
                                 }
                         ) {
