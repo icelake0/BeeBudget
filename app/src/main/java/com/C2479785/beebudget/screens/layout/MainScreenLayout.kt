@@ -2,10 +2,14 @@ package com.C2479785.beebudget.screens.layout
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -16,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.C2479785.beebudget.navagation.NavigationItem
 import com.C2479785.beebudget.navigation.AppScreens
@@ -27,8 +32,11 @@ import com.google.firebase.auth.FirebaseAuth
 fun MainScreenLayout(
     navController : NavController,
     route : NavigationItem = NavigationItem.Dashboard,
-    ScreenContent: @Composable () -> Unit
+    showFloatingActionButton: Boolean = false,
+    floatingActionButtonAction: () -> Unit = {},
+    screenContent: @Composable () -> Unit
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -38,8 +46,8 @@ fun MainScreenLayout(
                            Text(
                                text = "Logout",
                                modifier = Modifier.clickable {
-                                      FirebaseAuth.getInstance().signOut()                     
-                                      navController.navigate(AppScreens.LoginScreen.name)      
+                                      FirebaseAuth.getInstance().signOut()
+                                      navController.navigate(AppScreens.LoginScreen.name)
                                }
                            )
                            Icon(
@@ -53,12 +61,22 @@ fun MainScreenLayout(
                 }
             )
         },
+        floatingActionButton = {
+             if(showFloatingActionButton) { FloatingActionButton(
+                onClick = { floatingActionButtonAction() },
+                containerColor = PrimaryColor,
+                contentColor = Color.DarkGray
+            ) {
+                Icon(Icons.Filled.Add, "Add expense")
+            }}
+        },
+        floatingActionButtonPosition = FabPosition.End,
         bottomBar = {
             BottomAppBar { BottomNavigationBar(navController = navController, route = route) }
         }
     ) {
         val that = it
-        ScreenContent()
+        screenContent()
     }
 }
 

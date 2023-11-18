@@ -39,7 +39,7 @@ fun SplashScreen(navController: NavController) {
         if (FirebaseAuth.getInstance().currentUser?.uid.isNullOrEmpty()){
             navController.navigate(AppScreens.LoginScreen.name)
         }else {
-            navController.navigate(AppScreens.BudgetScreen.name)
+            navController.navigate(AppScreens.ExpenseScreen.name)
         }
     }
 
