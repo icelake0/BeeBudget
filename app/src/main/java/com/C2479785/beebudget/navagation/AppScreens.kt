@@ -8,7 +8,8 @@ enum class AppScreens {
     RegisterScreen,
     DashboardScreen,
     BudgetScreen,
-    ExpenseScreen;
+    ExpenseScreen,
+    AddExpenseScreen;
     companion object {
         fun fromRoute(route: String?): AppScreens
                 = when (route?.substringBefore("/")) {
@@ -18,6 +19,7 @@ enum class AppScreens {
             DashboardScreen.name -> DashboardScreen
             BudgetScreen.name -> BudgetScreen
             ExpenseScreen.name -> ExpenseScreen
+            AddExpenseScreen.name -> AddExpenseScreen
             null -> DashboardScreen
             else -> throw IllegalArgumentException("Route $route is not recognized")
         }

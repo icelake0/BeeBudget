@@ -1,5 +1,8 @@
 package com.C2479785.beebudget.components
 
+import android.app.DatePickerDialog
+import android.content.Context
+import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,11 +19,11 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -46,8 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.C2479785.beebudget.R
 import com.C2479785.beebudget.ui.theme.PrimaryColor
+import java.util.Calendar
+import java.util.Date
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(
         modifier: Modifier = Modifier,
@@ -123,7 +127,43 @@ fun BeeBudgetFullLogo() {
                 )
         }
 }
+//////////date picker component /////
+@Composable
+fun SelectDateField(context: Context, currentSelectedDate: MutableState<String>){
+        val year: Int
+        val month: Int
+        val day: Int
 
+        val calendar = Calendar.getInstance()
+        year = calendar.get(Calendar.YEAR)
+        month = calendar.get(Calendar.MONTH)
+        day = calendar.get(Calendar.DAY_OF_MONTH)
+        calendar.time = Date()
+
+        currentSelectedDate.value = "$day/$month/$year"
+        val datePickerDialog = DatePickerDialog(
+                context,
+                { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                        currentSelectedDate.value = "$dayOfMonth/$month/$year"
+                }, year, month, day
+        )
+
+        OutlinedButton(
+                colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.DarkGray
+                ),
+                onClick = {datePickerDialog.show()}
+        ) {
+                Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "drawable icons",
+                        tint = PrimaryColor
+                )
+                Text(text = currentSelectedDate.value)
+        }
+}
+//////////End date picker component /////
 
 
 
