@@ -85,7 +85,7 @@ fun AddExpenseScreen(
                     )
                 }
                 InputField(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = KeyboardType.Ascii,
                     valueState = description, labelId = "Description",
                     leadingIcon = { Icon(Icons.Default.ShoppingCart,  contentDescription = "", tint = PrimaryColor)},
                     onValueChange = {
@@ -97,7 +97,7 @@ fun AddExpenseScreen(
 
                 InputField(
                     keyboardType = KeyboardType.Number,
-                    valueState = amount, labelId = "amount",
+                    valueState = amount, labelId = "Amount",
                     leadingIcon = { Icon(Icons.Default.ShoppingCart,  contentDescription = "", tint = PrimaryColor)},
                     onValueChange = {
 
