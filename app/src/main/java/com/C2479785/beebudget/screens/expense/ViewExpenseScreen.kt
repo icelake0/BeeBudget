@@ -62,7 +62,7 @@ fun ViewExpenseScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp, bottom = 60.dp),
+                .padding(top = 90.dp, bottom = 60.dp, start = 20.dp, end = 20.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             val context = LocalContext.current
@@ -98,22 +98,16 @@ fun ViewExpenseScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Button(
+                        modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Red
                         ),
                         content = { Text(text = "Delete") },
                         enabled = !loading,
                         onClick = {
-
-                        },
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Button(
-                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                        content = { Text(text = "Update") },
-                        enabled = !loading,
-                        onClick = {
-
+                            viewModel.deleteExpenseById(expenseId!!, {message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }){ navController.popBackStack()}
                         },
                     )
                 }

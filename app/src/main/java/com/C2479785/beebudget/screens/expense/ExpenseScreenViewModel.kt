@@ -134,4 +134,32 @@ class ExpenseScreenViewModel: ViewModel() {
         }
     }
 
+    fun deleteExpenseById(
+        expenseId: String,
+        errorCallback: (message : String?) -> Unit = {},
+        successCallback: () -> Unit = {}
+    ) = viewModelScope.launch {
+        try {
+            if(_findingExpenseById.value == false) {
+                _expenseFoundById.value = null
+                _findingExpenseById.value = true
+                val docToDelete =  FirebaseFirestore
+                    .getInstance()
+                    .collection("expenses")
+                    .whereEqualTo("id", expenseId)
+                    .get().await().first()
+                FirebaseFirestore
+                    .getInstance()
+                    .collection("expenses")
+                    .document(docToDelete.id)
+                    .delete()
+                    .await()
+                successCallback()
+            }
+        } catch (ex: Exception){
+            errorCallback(ex.message)
+        } finally {
+            _findingExpenseById.value = false
+        }
+    }
 }
