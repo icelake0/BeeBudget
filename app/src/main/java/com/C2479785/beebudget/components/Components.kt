@@ -135,17 +135,25 @@ fun SelectDateField(context: Context, currentSelectedDate: MutableState<String>)
         val day: Int
 
         val calendar = Calendar.getInstance()
-        year = calendar.get(Calendar.YEAR)
-        month = calendar.get(Calendar.MONTH)
-        day = calendar.get(Calendar.DAY_OF_MONTH)
+        if(currentSelectedDate.value.isEmpty()) {
+                year = calendar.get(Calendar.YEAR)
+                month = calendar.get(Calendar.MONTH)+1
+                day = calendar.get(Calendar.DAY_OF_MONTH)
+                currentSelectedDate.value = "$day/$month/$year"
+        }else{
+                year = currentSelectedDate.value.split('/')[2].toInt()
+                month = currentSelectedDate.value.split('/')[1].toInt()
+                day = currentSelectedDate.value.split('/')[0].toInt()
+        }
+
+
         calendar.time = Date()
 
-        currentSelectedDate.value = "$day/$month/$year"
         val datePickerDialog = DatePickerDialog(
                 context,
                 { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                        currentSelectedDate.value = "$dayOfMonth/$month/$year"
-                }, year, month, day
+                        currentSelectedDate.value = "$dayOfMonth/${month+1}/$year"
+                }, year, month-1, day
         )
 
         OutlinedButton(
