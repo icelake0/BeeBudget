@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.C2479785.beebudget.components.ExpenseCard
 import com.C2479785.beebudget.components.SelectInputField
 import com.C2479785.beebudget.models.Expense
 import com.C2479785.beebudget.navagation.NavigationItem
@@ -78,7 +79,9 @@ fun ExpenseScreen(
 
                 }
             }
-            loadExpenses();
+            if(expenses.isEmpty() && !loading){
+                loadExpenses()
+            }
 
             Column(modifier = Modifier
                 .padding(12.dp)
@@ -108,78 +111,12 @@ fun ExpenseScreen(
                 }
                 LazyColumn {
                     items(items = expenses){
-                        ExpenseCard(expense = it)
+                        ExpenseCard(expense = it){expense->
+                            navController.navigate(route = AppScreens.ViewExpenseScreen.name+"/${expense.id}")
+                        }
                     }
                 }
 
-            }
-        }
-    }
-}
-
-@Composable
-fun ExpenseCard(
-    expense: Expense,
-    onItemClick: (Expense) -> Unit = {}
-) {
-    Card(modifier = Modifier
-        .padding(4.dp)
-        .fillMaxWidth()
-        .height(90.dp)
-        .clickable {
-            onItemClick(expense)
-        },
-        ) {
-        Row(
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Surface(
-                color = Color.Transparent
-            ) {
-                Text(
-                    text = "£${expense.amount}",
-                    maxLines = 1,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-            }
-            Surface(
-                color = Color.Transparent
-            ) {
-                Text(
-                    text = "${expense.description}",
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyLarge)
-            }
-        }
-        Row(
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Surface(
-                color = Color.Transparent
-            ) {
-                Text(
-                    text = "${expense.date}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            Surface(modifier = Modifier
-                .padding(5.dp),
-                color = Color(expense.pillColor()),
-                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                shadowElevation = 5.dp
-            ) {
-                Text(
-                    text = "${expense.category}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
             }
         }
     }

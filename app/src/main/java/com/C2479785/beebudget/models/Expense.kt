@@ -46,6 +46,17 @@ data class Expense(val id: String?,
                 category = result.get("category").toString()
             )
         }
+
+        fun nullInstance(): Expense {
+            return Expense(
+                id = null,
+                userId = null,
+                amount = "xx.xx",
+                description = "loading...",
+                date = "loading...",
+                category = "loading..."
+            )
+        }
     }
 }
 
