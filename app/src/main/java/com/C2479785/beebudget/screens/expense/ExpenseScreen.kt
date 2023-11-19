@@ -1,5 +1,7 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,7 +36,9 @@ import com.C2479785.beebudget.models.Expense
 import com.C2479785.beebudget.navagation.NavigationItem
 import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.screens.layout.MainScreenLayout
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExpenseScreen(
     navController : NavController,
@@ -47,30 +53,47 @@ fun ExpenseScreen(
            navController.navigate(AppScreens.AddExpenseScreen.name)
         }
     ) {
-        val movieList: List<Expense> = getExpenses()
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 50.dp, bottom = 60.dp),
             contentAlignment = Alignment.Center
         ) {
-            val selectedMonth = remember { mutableStateOf(0) }
+            val loading by viewModel.loadingExpenses.observeAsState(initial = false)
 
-            val selectedYear = remember { mutableStateOf(0) }
+            val expenses by viewModel.expenses.observeAsState(initial = listOf<Expense>())
 
+            val selectedMonth = remember { mutableStateOf(LocalDate.now().month.value -1) }
 
-            Column(modifier = Modifier.padding(12.dp).fillMaxSize()) {
+            val selectedYear = remember { mutableStateOf(
+                viewModel.years.indexOf(LocalDate.now().year.toString()))
+            }
+
+            val loadExpenses = fun(){
+                viewModel.loadExpenses(
+                    (selectedMonth.value + 1).toString(),
+                    viewModel.years[selectedYear.value],
+                    {}
+                ){
+
+                }
+            }
+            loadExpenses();
+
+            Column(modifier = Modifier
+                .padding(12.dp)
+                .fillMaxSize()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Spacer(modifier = Modifier.width(120.dp))
+                    Spacer(modifier = Modifier.width(100.dp))
                     SelectInputField(
                         title = "Month",
                         options = viewModel.months,
                         currentSelection = selectedMonth,
                         onChange = {
-
+                            loadExpenses()
                         }
                     )
                     Spacer(modifier = Modifier.width(5.dp))
@@ -79,12 +102,12 @@ fun ExpenseScreen(
                         options = viewModel.years,
                         currentSelection = selectedYear,
                         onChange = {
-
+                            loadExpenses()
                         }
                     )
                 }
                 LazyColumn {
-                    items(items = movieList){
+                    items(items = expenses){
                         ExpenseCard(expense = it)
                     }
                 }
@@ -108,7 +131,9 @@ fun ExpenseCard(
         },
         ) {
         Row(
-            modifier = Modifier.padding(5.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -131,7 +156,9 @@ fun ExpenseCard(
             }
         }
         Row(
-            modifier = Modifier.padding(5.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -156,73 +183,4 @@ fun ExpenseCard(
             }
         }
     }
-}
-
-fun getExpenses(): List<Expense> {
-    return listOf(
-        Expense(id = "tt0499549",
-            userId = "user_1",
-            amount = "54.60",
-            description = "October Netflix Subscription",
-            date = "15th October 2023",
-            category = "Subscriptions"),
-
-        Expense(id = "tt0416449",
-            userId = "user_1",
-            amount = "6.30",
-            description = "2kg of  Chicken",
-            date = "15th October 2023",
-            category = "Food"),
-
-        Expense(id = "tt0848228",
-            userId = "user_1",
-            amount = "15.55",
-            description = "3 bars of chocolate",
-            date = "16th October 2023",
-            category = "Groceries"),
-
-        Expense(id = "tt0993846",
-            userId = "user_1",
-            amount = "47.50",
-            description = "Bus to uni in week 3",
-            date = "16th October 2023",
-            category = "Transportation"),
-
-        Expense(id = "tt0816692",
-            userId = "user_1",
-            amount = "5.50",
-            description = "Movie night in October",
-            date = "17th October 2023",
-            category = "Entertainment"),
-
-        Expense(id = "tt0944947",
-            userId = "user_1",
-            amount = "5.50",
-            description = "A random hangout",
-            date = "18th October 2023",
-            category = "PersonalCare"),
-
-
-        Expense(id = "tt2306299",
-            userId = "user_1",
-            amount = "65.70",
-            description = "Cab to office in October",
-            date = "17th October 2023",
-            category = "Others"),
-
-        Expense(id = "tt0903747",
-            userId = "user_1",
-            amount = "9.59",
-            description = "Checkout and checking",
-            date = "18th October 2023",
-            category = "PersonalCare"),
-
-        Expense(id = "tt2707408",
-            userId = "user_1",
-            amount = "4.60",
-            description = "5 bags of rice",
-            date = "18th October 2023",
-            category = "Transportation"),
-
-        )
 }

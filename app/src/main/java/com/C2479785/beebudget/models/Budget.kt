@@ -35,7 +35,7 @@ data class Budget(public val id: String?,
     companion object {
         fun fromQueryDocumentSnapshot(result: QueryDocumentSnapshot): Budget {
             return Budget(
-                id = result.get("user_id").toString(),
+                id = result.get("id").toString(),
                 userId = result.get("user_id").toString(),
                 month = result.get("month").toString().toInt(),
                 year = result.get("year").toString().toInt(),

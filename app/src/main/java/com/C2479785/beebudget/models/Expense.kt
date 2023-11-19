@@ -1,5 +1,7 @@
 package com.C2479785.beebudget.models
 
+import com.google.firebase.firestore.QueryDocumentSnapshot
+
 data class Expense(val id: String?,
                    val userId: String?,
                  val amount: String,
@@ -31,6 +33,19 @@ data class Expense(val id: String?,
             "month" to this.date.split("/")[1],
             "year" to this.date.split("/")[2],
         )
+    }
+
+    companion object {
+        fun fromQueryDocumentSnapshot(result: QueryDocumentSnapshot): Expense {
+            return Expense(
+                id = result.get("id").toString(),
+                userId = result.get("user_id").toString(),
+                amount = result.get("amount").toString(),
+                description = result.get("description").toString(),
+                date = result.get("date").toString(),
+                category = result.get("category").toString()
+            )
+        }
     }
 }
 
