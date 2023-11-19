@@ -1,5 +1,6 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,8 +26,14 @@ class ExpenseScreenViewModel: ViewModel() {
     private var _loadingExpenses = MutableLiveData(false)
     val loadingExpenses: LiveData<Boolean> = _loadingExpenses
 
+    private var _findingExpenseById = MutableLiveData(false)
+    val findingExpenseById: LiveData<Boolean> = _findingExpenseById
+
     private var _expenses = MutableLiveData(listOf<Expense>())
     val expenses: LiveData<List<Expense>> = _expenses
+
+    private var _expenseFoundById = MutableLiveData<Expense?>(null)
+    val expenseFoundById: LiveData<Expense?> = _expenseFoundById
 
     val months = listOf<String> (
         "January","February","March",
@@ -79,6 +86,7 @@ class ExpenseScreenViewModel: ViewModel() {
         successCallback: () -> Unit
     ) = viewModelScope.launch {
         try {
+            Log.d("Loading Expenses","Loading Expenses")
             if(_loadingExpenses.value == false) {
                 _expenses.value = listOf<Expense>()
                 _loadingExpenses.value = true
@@ -92,13 +100,37 @@ class ExpenseScreenViewModel: ViewModel() {
                     .get().await().map {
                         Expense.fromQueryDocumentSnapshot(it)
                     }.toList()
-                _loadingExpenses.value = true
                 successCallback()
             }
         } catch (ex: Exception){
             errorCallback(ex.message)
         } finally {
             _loadingExpenses.value = false
+        }
+    }
+
+    fun findExpenseById(
+        expenseId: String,
+        errorCallback: (message : String?) -> Unit = {},
+        successCallback: () -> Unit = {}
+    ) = viewModelScope.launch {
+        try {
+            if(_findingExpenseById.value == false) {
+                _expenseFoundById.value = null
+                _findingExpenseById.value = true
+                _expenseFoundById.value = Expense.fromQueryDocumentSnapshot(
+                    FirebaseFirestore
+                    .getInstance()
+                    .collection("expenses")
+                    .whereEqualTo("id", expenseId)
+                    .get().await().first()
+                )
+                successCallback()
+            }
+        } catch (ex: Exception){
+            errorCallback(ex.message)
+        } finally {
+            _findingExpenseById.value = false
         }
     }
 

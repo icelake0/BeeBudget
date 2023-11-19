@@ -3,14 +3,17 @@ package com.C2479785.beebudget.navagation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.screens.budget.BudgetScreen
 import com.C2479785.beebudget.screens.dashboard.DashboardScreen
 import com.C2479785.beebudget.screens.expense.AddExpenseScreen
 import com.C2479785.beebudget.screens.expense.ExpenseScreen
+import com.C2479785.beebudget.screens.expense.ViewExpenseScreen
 import com.C2479785.beebudget.screens.login.LoginScreen
 import com.C2479785.beebudget.screens.register.RegisterScreen
 import com.C2479785.beebudget.screens.splash.SplashScreen
@@ -42,6 +45,12 @@ fun AppNavigation() {
         }
         composable(AppScreens.AddExpenseScreen.name){
             AddExpenseScreen(navController = navController)
+        }
+        composable(AppScreens.ViewExpenseScreen.name+"/{expense}",
+            arguments = listOf(navArgument(name = "expense") {type = NavType.StringType})) {
+                backStackEntry ->
+            ViewExpenseScreen(navController = navController,
+                expenseId = backStackEntry.arguments?.getString("expense"))
         }
     }
 

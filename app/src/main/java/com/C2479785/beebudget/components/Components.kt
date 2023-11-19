@@ -5,16 +5,20 @@ import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -23,6 +27,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -48,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.C2479785.beebudget.R
+import com.C2479785.beebudget.models.Expense
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 import java.util.Calendar
 import java.util.Date
@@ -127,6 +134,75 @@ fun BeeBudgetFullLogo() {
                 )
         }
 }
+
+@Composable
+fun ExpenseCard(
+        expense: Expense,
+        onItemClick: (Expense) -> Unit = {}
+) {
+        Card(modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .height(90.dp)
+                .clickable {
+                        onItemClick(expense)
+                },
+        ) {
+                Row(
+                        modifier = Modifier
+                                .padding(5.dp)
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                        Surface(
+                                color = Color.Transparent
+                        ) {
+                                Text(
+                                        text = "£${expense.amount}",
+                                        maxLines = 1,
+                                        style = MaterialTheme.typography.headlineSmall
+                                )
+                        }
+                        Surface(
+                                color = Color.Transparent
+                        ) {
+                                Text(
+                                        text = "${expense.description}",
+                                        maxLines = 1,
+                                        style = MaterialTheme.typography.bodyLarge)
+                        }
+                }
+                Row(
+                        modifier = Modifier
+                                .padding(5.dp)
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                        Surface(
+                                color = Color.Transparent
+                        ) {
+                                Text(
+                                        text = "${expense.date}",
+                                        style = MaterialTheme.typography.bodyLarge
+                                )
+                        }
+                        Surface(modifier = Modifier
+                                .padding(5.dp),
+                                color = Color(expense.pillColor()),
+                                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                shadowElevation = 5.dp
+                        ) {
+                                Text(
+                                        text = "${expense.category}",
+                                        style = MaterialTheme.typography.bodyLarge
+                                )
+                        }
+                }
+        }
+}
+
 //////////date picker component /////
 @Composable
 fun SelectDateField(context: Context, currentSelectedDate: MutableState<String>){

@@ -12,4 +12,5 @@ sealed class NavigationItem(var route: String, val icon: ImageVector?, var title
     object Dashboard : NavigationItem(AppScreens.DashboardScreen.name, Icons.Rounded.Home, "Dashboard")
     object Expense : NavigationItem(AppScreens.ExpenseScreen.name, Icons.Rounded.ShoppingCart, "Expense")
     object AddExpense : NavigationItem(AppScreens.AddExpenseScreen.name, Icons.Rounded.ShoppingCart, "Add Expense")
+    object ViewExpense : NavigationItem(AppScreens.ViewExpenseScreen.name, Icons.Rounded.ShoppingCart, "View Expense")
 }
