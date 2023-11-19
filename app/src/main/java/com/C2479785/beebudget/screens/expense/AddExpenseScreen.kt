@@ -1,5 +1,6 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,13 +15,17 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -50,9 +55,11 @@ fun AddExpenseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 0.dp, bottom = 60.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
-            val loading = false
+            val validFloatNumberPattern = remember { Regex("^\\d+\\.\\d{2}$") }
+
+            val loading by viewModel.addingExpense.observeAsState(initial = false)
 
             val selectedDate = remember { mutableStateOf("") }
             val selectedCategory = remember { mutableStateOf(0) }
@@ -61,9 +68,34 @@ fun AddExpenseScreen(
             val descriptionIsValid = remember(description.value) { description.value.trim().isNotEmpty() }
 
             val amount = rememberSaveable { mutableStateOf("") }
-            val amountIsValid = remember(amount.value) { amount.value.trim().isNotEmpty() }
+            val amountIsValid = remember(amount.value) {
+                amount.value.trim().isNotEmpty() && amount.value.matches(validFloatNumberPattern)
+            }
 
+            val addExpenseFormIsValid = remember(description.value, amount.value) {
+                descriptionIsValid && amountIsValid
+            }
 
+            val saveExpense = fun() {
+                viewModel.addExpense(
+                    amount = amount.value,
+                    description = description.value,
+                    date = selectedDate.value,
+                    category = ExpenseCategories.getList()[selectedCategory.value],
+                    {message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    },
+                ){
+                    Toast.makeText(context,
+                        "Expense Saved successfully",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            val clearForm = fun() {
+                description.value = ""
+                amount.value = ""
+            }
 
             Column(
                 verticalArrangement = Arrangement.Top,
@@ -88,9 +120,6 @@ fun AddExpenseScreen(
                     keyboardType = KeyboardType.Ascii,
                     valueState = description, labelId = "Description",
                     leadingIcon = { Icon(Icons.Default.ShoppingCart,  contentDescription = "", tint = PrimaryColor)},
-                    onValueChange = {
-
-                    },
                     enabled = !loading,
                     isError = false
                 )
@@ -99,21 +128,37 @@ fun AddExpenseScreen(
                     keyboardType = KeyboardType.Number,
                     valueState = amount, labelId = "Amount",
                     leadingIcon = { Icon(Icons.Default.ShoppingCart,  contentDescription = "", tint = PrimaryColor)},
-                    onValueChange = {
-
-                    },
                     enabled = !loading,
                     isError = false
                 )
-                Button(
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    content = { Text(text = "Save Expense") },
-                    enabled = !loading,
-                    onClick = {
-
-                    },
-                )
+                    verticalAlignment =Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    OutlinedButton(
+                        colors = ButtonDefaults.buttonColors(
+                                contentColor = PrimaryColor,
+                                containerColor = Color.Transparent
+                        ),
+                        content = { Text(text = "Save & Done") },
+                        enabled = !loading && addExpenseFormIsValid,
+                        onClick = {
+                            saveExpense()
+                            navController.popBackStack()
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
+                        content = { Text(text = "Save & Add Another") },
+                        enabled = !loading && addExpenseFormIsValid,
+                        onClick = {
+                            saveExpense()
+                            clearForm()
+                        },
+                    )
+                }
             }
         }
     }

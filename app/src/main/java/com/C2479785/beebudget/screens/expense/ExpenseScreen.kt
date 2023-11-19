@@ -161,36 +161,42 @@ fun ExpenseCard(
 fun getExpenses(): List<Expense> {
     return listOf(
         Expense(id = "tt0499549",
+            userId = "user_1",
             amount = "54.60",
             description = "October Netflix Subscription",
             date = "15th October 2023",
             category = "Subscriptions"),
 
         Expense(id = "tt0416449",
+            userId = "user_1",
             amount = "6.30",
             description = "2kg of  Chicken",
             date = "15th October 2023",
             category = "Food"),
 
         Expense(id = "tt0848228",
+            userId = "user_1",
             amount = "15.55",
             description = "3 bars of chocolate",
             date = "16th October 2023",
             category = "Groceries"),
 
         Expense(id = "tt0993846",
+            userId = "user_1",
             amount = "47.50",
             description = "Bus to uni in week 3",
             date = "16th October 2023",
             category = "Transportation"),
 
         Expense(id = "tt0816692",
+            userId = "user_1",
             amount = "5.50",
             description = "Movie night in October",
             date = "17th October 2023",
             category = "Entertainment"),
 
         Expense(id = "tt0944947",
+            userId = "user_1",
             amount = "5.50",
             description = "A random hangout",
             date = "18th October 2023",
@@ -198,18 +204,21 @@ fun getExpenses(): List<Expense> {
 
 
         Expense(id = "tt2306299",
+            userId = "user_1",
             amount = "65.70",
             description = "Cab to office in October",
             date = "17th October 2023",
             category = "Others"),
 
         Expense(id = "tt0903747",
+            userId = "user_1",
             amount = "9.59",
             description = "Checkout and checking",
             date = "18th October 2023",
             category = "PersonalCare"),
 
         Expense(id = "tt2707408",
+            userId = "user_1",
             amount = "4.60",
             description = "5 bags of rice",
             date = "18th October 2023",

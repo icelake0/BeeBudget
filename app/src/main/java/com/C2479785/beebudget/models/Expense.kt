@@ -1,6 +1,7 @@
 package com.C2479785.beebudget.models
 
 data class Expense(val id: String?,
+                   val userId: String?,
                  val amount: String,
                  val description: String,
                  val date: String,
@@ -17,6 +18,19 @@ data class Expense(val id: String?,
             null -> 0xFF9CCC65
             else -> 0xFF9CCC65
         }
+    }
+    fun toMap(): MutableMap<String, Any?> {
+        return mutableMapOf(
+            "id" to this.id,
+            "user_id" to this.userId,
+            "amount" to this.amount,
+            "description" to this.description,
+            "date" to this.date,
+            "category" to this.category,
+            "day" to this.date.split("/")[0],
+            "month" to this.date.split("/")[1],
+            "year" to this.date.split("/")[2],
+        )
     }
 }
 
