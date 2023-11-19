@@ -79,9 +79,9 @@ fun ExpenseScreen(
 
                 }
             }
-            if(expenses.isEmpty() && !loading){
+//            if(expenses.isEmpty() && !loading){
                 loadExpenses()
-            }
+//            }
 
             Column(modifier = Modifier
                 .padding(12.dp)
