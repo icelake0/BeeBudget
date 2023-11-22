@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -53,9 +58,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import com.C2479785.beebudget.R
 import com.C2479785.beebudget.models.Expense
 import com.C2479785.beebudget.ui.theme.PrimaryColor
@@ -140,35 +145,170 @@ fun BeeBudgetFullLogo() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SpendingProgress() {
-        BoxWithConstraints(
-                Modifier.fillMaxWidth(1f)
-                        .background(color = Color.Transparent)
+fun DashboardExpenseSummaryCard()
+{
+        Row(modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .height(90.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
         ) {
-                Column(
-                        Modifier.fillMaxWidth()
-                                .height(50.dp)
-                                .background(Color.LightGray, shape = RoundedCornerShape(10.dp))
-                ){}
-                Column(
-                        Modifier.background(Color.Red, shape = RoundedCornerShape(10.dp))
-                                .width(this.maxWidth/2)
-                                .height(50.dp)
-                ){}
-
+                Surface(
+                        Modifier
+                                .width(125.dp)
+                                .fillMaxHeight(),
+                        shape = RoundedCornerShape(10.dp),
+                        shadowElevation = 10.dp
+                ){
+                        Row(
+                                Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                        ) {
+                                Column(){
+                                        Icon(
+                                                modifier = Modifier
+                                                        .width(50.dp)
+                                                        .height(50.dp),
+                                                imageVector = Icons.Default.Settings,
+                                                contentDescription = "Budgeted amount"
+                                        )
+                                        Text(
+                                                text = "Budgeted",
+                                                style = MaterialTheme.typography.bodySmall
+                                        )
+                                        Text(
+                                                text = "£${7000.67}",
+                                                maxLines = 1,
+                                                style = MaterialTheme.typography.bodyLarge
+                                        )
+                                }
+                        }
+                }
+                Surface(
+                        Modifier.width(125.dp)
+                                .fillMaxHeight(),
+                        shape = RoundedCornerShape(10.dp),
+                        shadowElevation = 10.dp
+                ){
+                        Row(
+                                Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                        ) {
+                                Column(){
+                                        Icon(
+                                                modifier = Modifier
+                                                        .width(50.dp)
+                                                        .height(50.dp),
+                                                imageVector = Icons.Default.ShoppingCart,
+                                                contentDescription = "Budgeted amount"
+                                        )
+                                        Text(
+                                                text = "Expense",
+                                                style = MaterialTheme.typography.bodySmall
+                                        )
+                                        Text(
+                                                text = "£${7000.67}",
+                                                maxLines = 1,
+                                                style = MaterialTheme.typography.bodyLarge
+                                        )
+                                }
+                        }
+                }
+                Surface(
+                        Modifier.width(125.dp)
+                                .fillMaxHeight(),
+                        shape = RoundedCornerShape(10.dp),
+                        shadowElevation = 10.dp
+                ){
+                        Row(
+                                Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                        ) {
+                                Column(){
+                                        Icon(
+                                                modifier = Modifier
+                                                        .width(50.dp)
+                                                        .height(50.dp),
+                                                imageVector = Icons.Default.Refresh,
+                                                contentDescription = "Budgeted amount"
+                                        )
+                                        Text(
+                                                text = "Spend Rate",
+                                                style = MaterialTheme.typography.bodySmall
+                                        )
+                                        Text(
+                                                text = "77%",
+                                                style = MaterialTheme.typography.bodyLarge
+                                        )
+                                }
+                        }
+                }
         }
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun Top(modifier: Modifier) {
-        Column(modifier.background(PrimaryColor)) {
+fun SpendingProgressBar(percentageProgress: Float = 50.00f) {
 
+        var progressColor = Color(0xFF20AD26)
+
+        if(percentageProgress  > 70){
+                progressColor = Color(0xFFECBF39)
         }
-}
 
-@Composable
-fun Center(modifier: Modifier) {
+        if(percentageProgress  > 80){
+                progressColor = Color(0xFFEB8E06)
+        }
 
+        if(percentageProgress  >= 95){
+                progressColor = Color(0xFFC90748)
+        }
+
+
+        Row {
+                BoxWithConstraints(
+                        Modifier
+                                .fillMaxWidth()
+                                .background(color = Color.Transparent)
+                ) {
+                        Column(
+                                Modifier
+                                        .fillMaxWidth()
+                                        .height(30.dp)
+                                        .background(
+                                                Color.LightGray,
+                                                shape = RoundedCornerShape(10.dp)
+                                        )
+                        ) {}
+                        Column(
+                                Modifier
+                                        .background(progressColor, shape = RoundedCornerShape(10.dp))
+                                        .width(percentageProgress / 100 * this.maxWidth)
+                                        .height(30.dp)
+                        ) {}
+                        Column(
+                                Modifier
+                                        .background(
+                                                Color.Transparent,
+                                                shape = RoundedCornerShape(10.dp)
+                                        )
+                                        .width(this.maxWidth)
+                                        .height(30.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                        ) {
+                                Text(
+                                        text = "${percentageProgress}%",
+                                        style = MaterialTheme.typography.bodyLarge
+                                )
+                        }
+
+                }
+        }
 }
 
 @Composable
@@ -409,7 +549,9 @@ fun SingleChoiceView(selectedInputOption: MutableState<Int>, radioOptions : List
                                         .padding(vertical = 8.dp)
                         ) {
                                 RadioButton(
-                                        modifier = Modifier.size(3.dp).padding(top = 5.dp),
+                                        modifier = Modifier
+                                                .size(3.dp)
+                                                .padding(top = 5.dp),
                                         colors = RadioButtonDefaults.colors(selectedColor = PrimaryColor),
                                         selected = (text == selectedOption),
                                         onClick = {
