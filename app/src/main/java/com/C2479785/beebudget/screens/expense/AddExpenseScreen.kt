@@ -57,7 +57,7 @@ fun AddExpenseScreen(
                 .padding(top = 0.dp, bottom = 60.dp),
             contentAlignment = Alignment.TopCenter
         ) {
-            val validFloatNumberPattern = remember { Regex("^\\d+\\.\\d{2}$") }
+            val validFloatNumberPattern = remember { Regex("^\\d+\\.\\d{1,2}$") }
 
             val loading by viewModel.addingExpense.observeAsState(initial = false)
 
