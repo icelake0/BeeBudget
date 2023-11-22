@@ -5,8 +5,10 @@ import android.content.Context
 import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +53,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.C2479785.beebudget.R
@@ -133,6 +136,39 @@ fun BeeBudgetFullLogo() {
                         contentScale = ContentScale.Fit
                 )
         }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SpendingProgress() {
+        BoxWithConstraints(
+                Modifier.fillMaxWidth(1f)
+                        .background(color = Color.Transparent)
+        ) {
+                Column(
+                        Modifier.fillMaxWidth()
+                                .height(50.dp)
+                                .background(Color.LightGray, shape = RoundedCornerShape(10.dp))
+                ){}
+                Column(
+                        Modifier.background(Color.Red, shape = RoundedCornerShape(10.dp))
+                                .width(this.maxWidth/2)
+                                .height(50.dp)
+                ){}
+
+        }
+}
+
+@Composable
+private fun Top(modifier: Modifier) {
+        Column(modifier.background(PrimaryColor)) {
+
+        }
+}
+
+@Composable
+fun Center(modifier: Modifier) {
+
 }
 
 @Composable
