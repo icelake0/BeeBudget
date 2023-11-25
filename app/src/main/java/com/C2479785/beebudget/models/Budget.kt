@@ -28,8 +28,32 @@ data class Budget(public val id: String?,
             "transportation" to this.transportation,
             "entertainment" to this.entertainment,
             "personal_care" to this.personalCare,
-            "others" to this.others,
+            "others" to this.others
         )
+    }
+
+    fun getCategoryAmount(category: ExpenseCategories?): Float {
+        return when (category?.value) {
+            ExpenseCategories.Subscriptions.value -> this.subscriptions.toFloat()
+            ExpenseCategories.Food.value -> this.food.toFloat()
+            ExpenseCategories.Groceries.value -> this.groceries.toFloat()
+            ExpenseCategories.Transportation.value -> this.transportation.toFloat()
+            ExpenseCategories.Entertainment.value -> this.entertainment.toFloat()
+            ExpenseCategories.PersonalCare.value -> this.personalCare.toFloat()
+            ExpenseCategories.Others.value -> this.others.toFloat()
+            null -> this.total()
+            else -> this.total()
+        }
+    }
+
+    fun total(): Float {
+        return  (this.subscriptions.toFloat()
+        + this.food.toFloat()
+        +  this.groceries.toFloat()
+        +  this.transportation.toFloat()
+        +  this.entertainment.toFloat()
+        +  this.personalCare.toFloat()
+        + this.others.toFloat())
     }
 
     companion object {

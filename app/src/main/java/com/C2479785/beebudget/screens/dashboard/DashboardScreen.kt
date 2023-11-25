@@ -1,6 +1,8 @@
 package com.C2479785.beebudget.screens.dashboard
 
 import android.os.Build
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,18 +18,28 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.C2479785.beebudget.components.DashboardExpenseSummaryCard
 import com.C2479785.beebudget.components.SelectInputField
 import com.C2479785.beebudget.navagation.NavigationItem
 import com.C2479785.beebudget.components.SpendingProgressBar
+import com.C2479785.beebudget.models.DashboardSummaryDTO
+import com.C2479785.beebudget.models.Expense
 import com.C2479785.beebudget.navigation.AppScreens
+import com.C2479785.beebudget.screens.budget.BudgetScreenViewModel
+import com.C2479785.beebudget.screens.expense.ExpenseScreenViewModel
 import com.C2479785.beebudget.screens.layout.MainScreenLayout
 import java.time.LocalDate
 
@@ -35,7 +47,9 @@ import java.time.LocalDate
 @Composable
 fun DashboardScreen(
     navController : NavController,
-    viewModel: DashboardScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: DashboardScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    budgetViewModel: BudgetScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    expenseViewModel: ExpenseScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     MainScreenLayout(
         navController,
@@ -45,12 +59,42 @@ fun DashboardScreen(
             navController.navigate(AppScreens.AddExpenseScreen.name)
         }
     ) {
+        val context = LocalContext.current
 
-        val selectedMonth = remember { mutableStateOf(LocalDate.now().month.value -1) }
+        val selectedMonth = rememberSaveable { mutableIntStateOf(LocalDate.now().month.value -1) }
 
-        val selectedYear = remember { mutableStateOf(
+        val selectedYear = rememberSaveable { mutableIntStateOf(
             viewModel.years.indexOf(LocalDate.now().year.toString()))
         }
+
+        val budget by budgetViewModel.currentBudget.observeAsState(initial = null)
+
+        val expenses by expenseViewModel.expenses.observeAsState(initial = listOf<Expense>())
+
+//        val dashboardSummary : MutableState<DashboardSummaryDTO?> = rememberSaveable{ mutableStateOf(null) }
+
+        val dashboardSummary by viewModel.dashboardSummary.observeAsState(initial = null)
+
+        val updateDashboard = fun(){
+             viewModel.getDashboardSummary(budget!!, expenses);
+        }
+
+        val refreshData = fun () {
+            budgetViewModel.geBudgetForForm(
+                selectedMonth.value, selectedYear.value
+            ){
+                Log.d("Gbemileke", "Refreshing dashboard data Month : ${selectedMonth.value} , Year : ${selectedYear.value}")
+                expenseViewModel.loadExpenses(
+                    (selectedMonth.value + 1).toString(),
+                    viewModel.years[selectedYear.value],
+                    {}
+                ){
+                    updateDashboard();
+                }
+            }
+        }
+
+        refreshData()
 
         Box(
             modifier = Modifier
@@ -73,7 +117,8 @@ fun DashboardScreen(
                         options = viewModel.months,
                         currentSelection = selectedMonth,
                         onChange = {
-//                            loadExpenses()
+                            Log.d("Gbemileke", "Month Changed to ${selectedMonth.value}")
+                            refreshData()
                         }
                     )
                     Spacer(modifier = Modifier.width(5.dp))
@@ -82,7 +127,8 @@ fun DashboardScreen(
                         options = viewModel.years,
                         currentSelection = selectedYear,
                         onChange = {
-//                            loadExpenses()
+                            Log.d("Gbemileke", "Year Changed to ${selectedYear.value}")
+                            refreshData()
                         }
                     )
                 }
@@ -91,7 +137,11 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    DashboardExpenseSummaryCard()
+                    DashboardExpenseSummaryCard(
+                        dashboardSummary?.totalBudget ?: 0.00f,
+                        dashboardSummary?.totalExpense ?: 0.00f,
+                        dashboardSummary?.spendRate ?: 0.00f
+                    )
                 }
                 Row(
                     Modifier.fillMaxWidth()
@@ -111,7 +161,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(45.66f)
+                    SpendingProgressBar(dashboardSummary?.subscriptions ?: 0.00f)
                 }
 
                 Row(
@@ -132,7 +182,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(87.29f)
+                    SpendingProgressBar(dashboardSummary?.food ?: 0.00f)
                 }
 
                 Row(
@@ -153,7 +203,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(0.00f)
+                    SpendingProgressBar(dashboardSummary?.groceries ?: 0.00f)
                 }
 
                 Row(
@@ -174,7 +224,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(10.58f)
+                    SpendingProgressBar(dashboardSummary?.transportation ?: 0.00f)
                 }
 
                 Row(
@@ -195,7 +245,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(70.45f)
+                    SpendingProgressBar(dashboardSummary?.entertainment ?: 0.00f)
                 }
 
                 Row(
@@ -216,7 +266,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(50.78f)
+                    SpendingProgressBar(dashboardSummary?.personalCare ?: 0.00f)
                 }
 
                 Row(
@@ -237,7 +287,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(98.48f)
+                    SpendingProgressBar(dashboardSummary?.others ?: 0.00f)
                 }
 
                 Row(
@@ -258,7 +308,7 @@ fun DashboardScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SpendingProgressBar(77.48f)
+                    SpendingProgressBar(dashboardSummary?.spendRate ?: 0.00f)
                 }
             }
         }

@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.C2479785.beebudget.models.Budget
+import com.C2479785.beebudget.models.DashboardSummaryDTO
 import com.C2479785.beebudget.models.Expense
+import com.C2479785.beebudget.models.ExpenseCategories
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -45,4 +47,48 @@ class DashboardScreenViewModel: ViewModel() {
     val years = listOf<String> (
         "2021","2022","2023", "2024", "2025"
     )
+
+    private val _dashboardSummary = MutableLiveData<DashboardSummaryDTO>(null)
+    val dashboardSummary : LiveData<DashboardSummaryDTO> = _dashboardSummary
+
+    fun getDashboardSummary(
+        budget: Budget,
+        expenses: List<Expense>,
+    ) = viewModelScope.launch {
+        Log.d("Gbemileke", budget.toString())
+        val totalBudget : Float = budget.total()
+        val totalExpense : Float = expenses.map { it.amount.toFloat() }.sum()
+        _dashboardSummary.value = DashboardSummaryDTO (
+            totalBudget = totalBudget,
+            totalExpense  = totalExpense,
+            spendRate  = calculateSpendRate(budget, expenses),
+            subscriptions  = calculateSpendRate(budget, expenses, ExpenseCategories.Subscriptions),
+            food  = calculateSpendRate(budget, expenses, ExpenseCategories.Food),
+            groceries  = calculateSpendRate(budget, expenses, ExpenseCategories.Groceries),
+            transportation  = calculateSpendRate(budget, expenses, ExpenseCategories.Transportation),
+            entertainment  = calculateSpendRate(budget, expenses, ExpenseCategories.Entertainment),
+            personalCare  = calculateSpendRate(budget, expenses, ExpenseCategories.PersonalCare),
+            others  = calculateSpendRate(budget, expenses, ExpenseCategories.Others)
+        )
+    }
+
+    private fun calculateSpendRate(
+        budget: Budget,
+        expenses: List<Expense>,
+        expenseCategory : ExpenseCategories? = null
+    ) : Float
+    {
+//        val totalBudget : Float = budget.toMap()[expenseCategory?.value ?: "total"].toString().toFloat()
+        val totalBudget = budget.getCategoryAmount(expenseCategory)
+
+        if(totalBudget == 0.0f) return 100.00f
+        val totalExpense : Float = expenses.filter {
+            if(expenseCategory != null)
+                it.category == expenseCategory.value
+            else
+                true
+        }.map { it.amount.toFloat() }.sum()
+
+        return totalExpense/totalBudget*100
+    }
 }

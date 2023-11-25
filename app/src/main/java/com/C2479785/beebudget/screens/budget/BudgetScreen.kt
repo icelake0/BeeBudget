@@ -65,6 +65,7 @@ import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.screens.layout.MainScreenLayout
 import com.C2479785.beebudget.screens.register.RegisterScreenViewModel
 import com.C2479785.beebudget.ui.theme.PrimaryColor
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -84,10 +85,11 @@ fun BudgetScreen(
 //            val validFloatNumberPattern = remember { Regex("^\\d*\\.\\d+|\\d+\\.\\d*$") }
             val validWholeNumberPattern = remember { Regex("^\\d+\$") }
 
-            val selectedMonth = remember { mutableStateOf(0) }
+            val selectedMonth = remember { mutableStateOf(LocalDate.now().month.value -1) }
 
-            val selectedYear = remember { mutableStateOf(0) }
-
+            val selectedYear = remember { mutableStateOf(
+                viewModel.years.indexOf(LocalDate.now().year.toString()))
+            }
             val subscriptions = rememberSaveable { mutableStateOf("") }
             val subscriptionsIsValid = remember(subscriptions.value) { subscriptions.value.trim().isNotEmpty() }
 
@@ -143,7 +145,10 @@ fun BudgetScreen(
             }
 
             if(!loadedBudget){
-                viewModel.geBudgetForForm(errorCallback = {message ->
+                viewModel.geBudgetForForm(
+                    selectedMonth.value,
+                    selectedYear.value,
+                    errorCallback = {message ->
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }){
                     updateBudgetFormFields()
