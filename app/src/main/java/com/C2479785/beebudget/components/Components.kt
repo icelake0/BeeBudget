@@ -145,7 +145,11 @@ fun BeeBudgetFullLogo() {
 
 @Preview(showBackground = true)
 @Composable
-fun DashboardExpenseSummaryCard()
+fun DashboardExpenseSummaryCard(
+        totalBudget: Float = 0.00f,
+        totalExpense:Float  = 0.00f,
+        spendRate:Float  = 0.00f,
+)
 {
         Row(modifier = Modifier
                 .padding(4.dp)
@@ -179,7 +183,7 @@ fun DashboardExpenseSummaryCard()
                                                 style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
-                                                text = "£${7000.67}",
+                                                text = "£${totalBudget}",
                                                 maxLines = 1,
                                                 style = MaterialTheme.typography.bodyLarge
                                         )
@@ -210,7 +214,7 @@ fun DashboardExpenseSummaryCard()
                                                 style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
-                                                text = "£${7000.67}",
+                                                text = "£${totalExpense}",
                                                 maxLines = 1,
                                                 style = MaterialTheme.typography.bodyLarge
                                         )
@@ -241,7 +245,7 @@ fun DashboardExpenseSummaryCard()
                                                 style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
-                                                text = "77%",
+                                                text = "${spendRate}%",
                                                 style = MaterialTheme.typography.bodyLarge
                                         )
                                 }

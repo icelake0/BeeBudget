@@ -18,6 +18,7 @@ enum class ExpenseCategories (val value : String) {
                 ExpenseCategories.Food.value,
                 ExpenseCategories.Groceries.value,
                 ExpenseCategories.Transportation.value,
+                ExpenseCategories.Entertainment.value,
                 ExpenseCategories.PersonalCare.value,
                 ExpenseCategories.Others.value,
             )
