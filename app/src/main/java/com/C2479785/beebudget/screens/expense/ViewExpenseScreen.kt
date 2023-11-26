@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -87,6 +89,8 @@ fun ViewExpenseScreen(
 
             val expense by viewModel.expenseFoundById.observeAsState(initial = null)
 
+            val expensePhotoURI by viewModel.expensePhotoURI.observeAsState(initial = null)
+
             if(expense == null){
                 viewModel.findExpenseById(expenseId!!, {message ->
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
@@ -94,8 +98,6 @@ fun ViewExpenseScreen(
             }
 
             var shouldShowCamera: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-            var shouldShowPhoto: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
-            lateinit var photoUri: Uri
             lateinit var outputDirectory: File
             lateinit var cameraExecutor: ExecutorService
 
@@ -109,30 +111,32 @@ fun ViewExpenseScreen(
             outputDirectory = getOutputDirectory()
             cameraExecutor = Executors.newSingleThreadExecutor()
 
+
             val requestCameraPermission = fun() {
                 when {
                     ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.CAMERA
                     ) == PackageManager.PERMISSION_GRANTED -> {
-                        Log.i("kilo", "Permission previously granted")
                         shouldShowCamera.value = true
                     }
 
                     ActivityCompat.shouldShowRequestPermissionRationale(
                         activity,
                         Manifest.permission.CAMERA
-                    ) -> Log.i("kilo", "Show camera permissions dialog")
+                    ) -> Toast.makeText(context, "You need to grant permission to yse camera", Toast.LENGTH_SHORT).show()
 
-//                    else -> activity.requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    else -> Toast.makeText(context, "You need to grant permission to yse camera", Toast.LENGTH_SHORT).show()
                 }
             }
 
             var handleImageCapture = fun (uri: Uri) {
-                Log.i("kilo", "Image captured: $uri")
                 shouldShowCamera.value = false
-                photoUri = uri
-                shouldShowPhoto.value = true
+                viewModel.uploadPhotoToFireStore(uri, expenseId!!, {message->
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }){
+                    viewModel.downloadPhotoFromFireStore(expense!!)
+                }
                 cameraExecutor.shutdown()
             }
 
@@ -148,13 +152,13 @@ fun ViewExpenseScreen(
                             outputDirectory = outputDirectory,
                             executor = cameraExecutor,
                             onImageCaptured = {handleImageCapture(it)},
-                            onError = { Log.e("kilo", "View error:", it) }
+                            onError = { }
                         )
                     }
 
-                    if (shouldShowPhoto.value) {
+                    if (expensePhotoURI !== null) {
                         Image(
-                            painter = rememberImagePainter(photoUri),
+                            painter = rememberImagePainter(expensePhotoURI),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize()
                         )

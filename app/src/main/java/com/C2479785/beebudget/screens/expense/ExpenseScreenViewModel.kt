@@ -20,6 +20,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -45,6 +46,9 @@ class ExpenseScreenViewModel: ViewModel() {
 
     private var _expenseFoundById = MutableLiveData<Expense?>(null)
     val expenseFoundById: LiveData<Expense?> = _expenseFoundById
+
+    private var _expensePhotoURI = MutableLiveData<Uri?>(null)
+    val expensePhotoURI: LiveData<Uri?> = _expensePhotoURI
 
     val months = listOf<String> (
         "January","February","March",
@@ -136,6 +140,7 @@ class ExpenseScreenViewModel: ViewModel() {
                     .whereEqualTo("id", expenseId)
                     .get().await().first()
                 )
+                downloadPhotoFromFireStore(_expenseFoundById.value!!)
                 successCallback()
             }
         } catch (ex: Exception){
@@ -175,15 +180,32 @@ class ExpenseScreenViewModel: ViewModel() {
     }
 
     fun uploadPhotoToFireStore(
+        photoUri: Uri,
+        expenseId: String,
         errorCallback: (message : String?) -> Unit = {},
-        successCallback: () -> Unit = {}
+        successCallback: () -> Unit = {},
     ) = viewModelScope.launch {
         try {
-
+            FirebaseStorage.getInstance()
+                .reference.child("expense/${expenseId}.png")
+                .putFile(photoUri).await()
+            successCallback()
         } catch (ex: Exception){
             errorCallback(ex.message)
-        } finally {
-//            _findingExpenseById.value = false
+        }
+    }
+
+    fun downloadPhotoFromFireStore(expense: Expense) = viewModelScope.launch {
+        try {
+            _expensePhotoURI.value = FirebaseStorage.getInstance()
+                .reference.child("expense/${expense.id}.png")
+                .downloadUrl.await()
+        } catch (ex: Exception){
+            try{
+            _expensePhotoURI.value = FirebaseStorage.getInstance()
+                .reference.child("expense/default.png")
+                .downloadUrl.await()
+            }catch(ex: Exception){}
         }
     }
 

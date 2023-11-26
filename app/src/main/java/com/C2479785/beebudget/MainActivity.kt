@@ -50,42 +50,23 @@ class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Log.i("kilo", "Permission granted")
-//            shouldShowCamera.value = true
-        } else {
-            Log.i("kilo", "Permission denied")
-        }
-    }
+    ) {}
 
     private fun requestCameraPermission() {
         when {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i("kilo", "Permission previously granted")
-//                shouldShowCamera.value = true
-            }
+            ) == PackageManager.PERMISSION_GRANTED -> {}
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.CAMERA
-            ) -> Log.i("kilo", "Show camera permissions dialog")
+            ) -> Log.i("Gbemileke", "Show camera permissions dialog")
 
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
-
-
-
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        cameraExecutor.shutdown()
-//    }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

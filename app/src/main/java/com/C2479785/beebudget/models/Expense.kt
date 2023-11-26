@@ -1,5 +1,6 @@
 package com.C2479785.beebudget.models
 
+import androidx.compose.ui.graphics.Color
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
 data class Expense(val id: String?,
@@ -10,15 +11,15 @@ data class Expense(val id: String?,
                  val category: String) {
     fun pillColor(): Long {
         return when (this.category) {
-            ExpenseCategories.Subscriptions.value -> 0xFF4CAF50
-            ExpenseCategories.Food.value -> 0xFF7C4DFF
-            ExpenseCategories.Groceries.value -> 0xFFFFC300
-            ExpenseCategories.Transportation.value -> 0xFF795548
-            ExpenseCategories.Entertainment.value -> 0xFFC70039
-            ExpenseCategories.PersonalCare.value -> 0xFF1DC5C5
-            ExpenseCategories.Others.value -> 0xFF786CE2
-            null -> 0xFF9CCC65
-            else -> 0xFF9CCC65
+            ExpenseCategories.Subscriptions.value -> 0xFFA2E2A5
+            ExpenseCategories.Food.value -> 0xFFDF6F66
+            ExpenseCategories.Groceries.value -> 0xFFE7CF85
+            ExpenseCategories.Transportation.value -> 0xFF9677CE
+            ExpenseCategories.Entertainment.value -> 0xFF6E97B8
+            ExpenseCategories.PersonalCare.value -> 0xFFC0C77F
+            ExpenseCategories.Others.value -> 0xFFCC7895
+            null -> 0xFFC0C77F
+            else -> 0xFFC0C77F
         }
     }
     fun toMap(): MutableMap<String, Any?> {
