@@ -2,6 +2,7 @@ package com.C2479785.beebudget.components
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -492,6 +493,7 @@ fun CommonDialog(
         onChange: () -> Unit = {},
         content: @Composable (() -> Unit)? = null
 ) {
+        val oldSelection = selectedInputOption.value
         AlertDialog(
                 containerColor = Color.White,
                 onDismissRequest = {
@@ -509,21 +511,14 @@ fun CommonDialog(
                         }
                 },
                 text = content,
-                dismissButton = {
-                        Button(
-                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
-                                onClick = { state.value = false }
-                        ) {
-                                Text("Cancel")
-                        }
-                },
+                dismissButton = {},
                 confirmButton = {
                         Button(
                                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
                                 onClick = {
                                         selectedOption.value = selectedInputOption.value
-                                        onChange()
                                         state.value = false
+                                        onChange()
                                 }
                         ) {
                                 Text("Ok")
@@ -534,8 +529,16 @@ fun CommonDialog(
 
 
 @Composable
-fun SingleChoiceView(selectedInputOption: MutableState<Int>, radioOptions : List<String>) {
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[selectedInputOption.value]) }
+fun SingleChoiceView(
+        selectedInputOption: MutableState<Int>,
+        radioOptions : List<String>
+) {
+        val  selectedOption = remember { mutableStateOf(radioOptions[selectedInputOption.value]) }
+
+        val onOptionSelected = fun(selectedText: String) {
+                selectedOption.value = selectedText
+                selectedInputOption.value = radioOptions.indexOf(selectedText)
+        }
         Column(
                 Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -545,7 +548,7 @@ fun SingleChoiceView(selectedInputOption: MutableState<Int>, radioOptions : List
                                 Modifier
                                         .fillMaxWidth()
                                         .selectable(
-                                                selected = (text == selectedOption),
+                                                selected = (text == selectedOption.value),
                                                 onClick = {
                                                         onOptionSelected(text)
                                                 }
@@ -557,7 +560,7 @@ fun SingleChoiceView(selectedInputOption: MutableState<Int>, radioOptions : List
                                                 .size(3.dp)
                                                 .padding(top = 5.dp),
                                         colors = RadioButtonDefaults.colors(selectedColor = PrimaryColor),
-                                        selected = (text == selectedOption),
+                                        selected = (text == selectedOption.value),
                                         onClick = {
                                                 onOptionSelected(text)
                                                 selectedInputOption.value = radioOptions.indexOf(text)
