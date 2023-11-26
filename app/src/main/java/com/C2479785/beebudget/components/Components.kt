@@ -62,8 +62,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.navigation.NavController
 import com.C2479785.beebudget.R
 import com.C2479785.beebudget.models.Expense
+import com.C2479785.beebudget.navigation.AppScreens
 import com.C2479785.beebudget.ui.theme.PrimaryColor
 import java.util.Calendar
 import java.util.Date
@@ -144,12 +146,12 @@ fun BeeBudgetFullLogo() {
         }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun DashboardExpenseSummaryCard(
         totalBudget: Float = 0.00f,
         totalExpense:Float  = 0.00f,
         spendRate:Float  = 0.00f,
+        navController : NavController,
 )
 {
         Row(modifier = Modifier
@@ -162,7 +164,10 @@ fun DashboardExpenseSummaryCard(
                 Surface(
                         Modifier
                                 .width(125.dp)
-                                .fillMaxHeight(),
+                                .fillMaxHeight()
+                                .clickable(){
+                                        navController.navigate(AppScreens.BudgetScreen.name)
+                                },
                         shape = RoundedCornerShape(10.dp),
                         shadowElevation = 10.dp
                 ){
@@ -180,7 +185,7 @@ fun DashboardExpenseSummaryCard(
                                                 contentDescription = "Budgeted amount"
                                         )
                                         Text(
-                                                text = "Budgeted",
+                                                text = "Budget",
                                                 style = MaterialTheme.typography.bodySmall
                                         )
                                         Text(
@@ -193,7 +198,10 @@ fun DashboardExpenseSummaryCard(
                 }
                 Surface(
                         Modifier.width(125.dp)
-                                .fillMaxHeight(),
+                                .fillMaxHeight()
+                                .clickable(){
+                                        navController.navigate(AppScreens.ExpenseScreen.name)
+                                },
                         shape = RoundedCornerShape(10.dp),
                         shadowElevation = 10.dp
                 ){
@@ -224,7 +232,10 @@ fun DashboardExpenseSummaryCard(
                 }
                 Surface(
                         Modifier.width(125.dp)
-                                .fillMaxHeight(),
+                                .fillMaxHeight()
+                                .clickable(){
+                                            //force reload dashboard
+                                },
                         shape = RoundedCornerShape(10.dp),
                         shadowElevation = 10.dp
                 ){

@@ -55,9 +55,10 @@ class DashboardScreenViewModel: ViewModel() {
         budget: Budget,
         expenses: List<Expense>,
     ) = viewModelScope.launch {
-        Log.d("Gbemileke", budget.toString())
-        val totalBudget : Float = budget.total()
-        val totalExpense : Float = expenses.map { it.amount.toFloat() }.sum()
+        val totalBudget : Float = String.format("%.2f", budget.total()).toFloat()
+        val totalExpense : Float = String.format("%.2f",
+            expenses.map { it.amount.toFloat() }.sum()
+        ).toFloat()
         _dashboardSummary.value = DashboardSummaryDTO (
             totalBudget = totalBudget,
             totalExpense  = totalExpense,
@@ -78,7 +79,6 @@ class DashboardScreenViewModel: ViewModel() {
         expenseCategory : ExpenseCategories? = null
     ) : Float
     {
-//        val totalBudget : Float = budget.toMap()[expenseCategory?.value ?: "total"].toString().toFloat()
         val totalBudget = budget.getCategoryAmount(expenseCategory)
 
         if(totalBudget == 0.0f) return 100.00f
@@ -89,6 +89,6 @@ class DashboardScreenViewModel: ViewModel() {
                 true
         }.map { it.amount.toFloat() }.sum()
 
-        return totalExpense/totalBudget*100
+        return String.format("%.2f", totalExpense/totalBudget*100).toFloat()
     }
 }
