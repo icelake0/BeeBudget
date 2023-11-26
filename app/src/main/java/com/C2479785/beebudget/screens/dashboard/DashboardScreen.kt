@@ -59,8 +59,6 @@ fun DashboardScreen(
             navController.navigate(AppScreens.AddExpenseScreen.name)
         }
     ) {
-        val context = LocalContext.current
-
         val selectedMonth = rememberSaveable { mutableIntStateOf(LocalDate.now().month.value -1) }
 
         val selectedYear = rememberSaveable { mutableIntStateOf(
@@ -70,8 +68,6 @@ fun DashboardScreen(
         val budget by budgetViewModel.currentBudget.observeAsState(initial = null)
 
         val expenses by expenseViewModel.expenses.observeAsState(initial = listOf<Expense>())
-
-//        val dashboardSummary : MutableState<DashboardSummaryDTO?> = rememberSaveable{ mutableStateOf(null) }
 
         val dashboardSummary by viewModel.dashboardSummary.observeAsState(initial = null)
 
@@ -83,7 +79,6 @@ fun DashboardScreen(
             budgetViewModel.geBudgetForForm(
                 selectedMonth.value, selectedYear.value
             ){
-                Log.d("Gbemileke", "Refreshing dashboard data Month : ${selectedMonth.value} , Year : ${selectedYear.value}")
                 expenseViewModel.loadExpenses(
                     (selectedMonth.value + 1).toString(),
                     viewModel.years[selectedYear.value],
@@ -140,7 +135,8 @@ fun DashboardScreen(
                     DashboardExpenseSummaryCard(
                         dashboardSummary?.totalBudget ?: 0.00f,
                         dashboardSummary?.totalExpense ?: 0.00f,
-                        dashboardSummary?.spendRate ?: 0.00f
+                        dashboardSummary?.spendRate ?: 0.00f,
+                        navController
                     )
                 }
                 Row(
