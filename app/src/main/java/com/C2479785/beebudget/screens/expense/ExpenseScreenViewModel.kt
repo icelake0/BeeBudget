@@ -1,20 +1,32 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.C2479785.beebudget.R
 import com.C2479785.beebudget.models.Budget
 import com.C2479785.beebudget.models.Expense
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.File
 import java.time.LocalDate
 import java.util.UUID
+import java.util.concurrent.ExecutorService
 
 class ExpenseScreenViewModel: ViewModel() {
 
@@ -34,6 +46,9 @@ class ExpenseScreenViewModel: ViewModel() {
 
     private var _expenseFoundById = MutableLiveData<Expense?>(null)
     val expenseFoundById: LiveData<Expense?> = _expenseFoundById
+
+    private var _expensePhotoURI = MutableLiveData<Uri?>(null)
+    val expensePhotoURI: LiveData<Uri?> = _expensePhotoURI
 
     val months = listOf<String> (
         "January","February","March",
@@ -125,6 +140,7 @@ class ExpenseScreenViewModel: ViewModel() {
                     .whereEqualTo("id", expenseId)
                     .get().await().first()
                 )
+                downloadPhotoFromFireStore(_expenseFoundById.value!!)
                 successCallback()
             }
         } catch (ex: Exception){
@@ -162,4 +178,35 @@ class ExpenseScreenViewModel: ViewModel() {
             _findingExpenseById.value = false
         }
     }
+
+    fun uploadPhotoToFireStore(
+        photoUri: Uri,
+        expenseId: String,
+        errorCallback: (message : String?) -> Unit = {},
+        successCallback: () -> Unit = {},
+    ) = viewModelScope.launch {
+        try {
+            FirebaseStorage.getInstance()
+                .reference.child("expense/${expenseId}.png")
+                .putFile(photoUri).await()
+            successCallback()
+        } catch (ex: Exception){
+            errorCallback(ex.message)
+        }
+    }
+
+    fun downloadPhotoFromFireStore(expense: Expense) = viewModelScope.launch {
+        try {
+            _expensePhotoURI.value = FirebaseStorage.getInstance()
+                .reference.child("expense/${expense.id}.png")
+                .downloadUrl.await()
+        } catch (ex: Exception){
+            try{
+            _expensePhotoURI.value = FirebaseStorage.getInstance()
+                .reference.child("expense/default.png")
+                .downloadUrl.await()
+            }catch(ex: Exception){}
+        }
+    }
+
 }
