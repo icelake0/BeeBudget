@@ -1,7 +1,13 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,9 +42,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.C2479785.beebudget.R
 import com.C2479785.beebudget.components.BeeBudgetFullLogo
+import com.C2479785.beebudget.components.CameraView
 import com.C2479785.beebudget.components.ExpenseCard
 import com.C2479785.beebudget.components.SelectDateField
 import com.C2479785.beebudget.components.InputField
@@ -47,6 +58,9 @@ import com.C2479785.beebudget.models.ExpenseCategories
 import com.C2479785.beebudget.navagation.NavigationItem
 import com.C2479785.beebudget.screens.layout.DetailsScreenLayout
 import com.C2479785.beebudget.ui.theme.PrimaryColor
+import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @Composable
 fun ViewExpenseScreen(
@@ -67,6 +81,8 @@ fun ViewExpenseScreen(
         ) {
             val context = LocalContext.current
 
+            val activity = LocalContext.current as Activity
+
             val loading by viewModel.findingExpenseById.observeAsState(initial = false)
 
             val expense by viewModel.expenseFoundById.observeAsState(initial = null)
@@ -77,19 +93,72 @@ fun ViewExpenseScreen(
                 })
             }
 
+            var shouldShowCamera: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+            var shouldShowPhoto: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+            lateinit var photoUri: Uri
+            lateinit var outputDirectory: File
+            lateinit var cameraExecutor: ExecutorService
+
+            val getOutputDirectory = fun (): File {
+                val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                    File(it, context.resources.getString(R.string.app_name)).apply { mkdirs() }
+                }
+
+                return if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir
+            }
+            outputDirectory = getOutputDirectory()
+            cameraExecutor = Executors.newSingleThreadExecutor()
+
+            val requestCameraPermission = fun() {
+                when {
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED -> {
+                        Log.i("kilo", "Permission previously granted")
+                        shouldShowCamera.value = true
+                    }
+
+                    ActivityCompat.shouldShowRequestPermissionRationale(
+                        activity,
+                        Manifest.permission.CAMERA
+                    ) -> Log.i("kilo", "Show camera permissions dialog")
+
+//                    else -> activity.requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+            }
+
+            var handleImageCapture = fun (uri: Uri) {
+                Log.i("kilo", "Image captured: $uri")
+                shouldShowCamera.value = false
+                photoUri = uri
+                shouldShowPhoto.value = true
+                cameraExecutor.shutdown()
+            }
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally) {
-                Card(modifier = Modifier.padding(12.dp).size(240.dp)) {
-                    Image(
-                        painter = painterResource(
-                            id = R.drawable.bee_budget_logo,
-                        ),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = expense?.description
-                    )
+                Card(modifier = Modifier.padding(12.dp).size(240.dp).clickable {
+                    requestCameraPermission()
+                }) {
+                    if (shouldShowCamera.value) {
+                        CameraView(
+                            outputDirectory = outputDirectory,
+                            executor = cameraExecutor,
+                            onImageCaptured = {handleImageCapture(it)},
+                            onError = { Log.e("kilo", "View error:", it) }
+                        )
+                    }
 
+                    if (shouldShowPhoto.value) {
+                        Image(
+                            painter = rememberImagePainter(photoUri),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
                 ExpenseCard(expense ?: getNullExpense())
                 Row(

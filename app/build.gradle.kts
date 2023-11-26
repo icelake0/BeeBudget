@@ -66,6 +66,17 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.material3:material3:1.2.0-alpha02")
+
+    // CameraX
+    val camerax_version = "1.0.1"
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-view:1.0.0-alpha27")
+    // Icons
+    //implementation("androidx.compose.material:material-icons-extended:1.8.0")
+    // Coil
+    implementation("io.coil-kt:coil-compose:1.4.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

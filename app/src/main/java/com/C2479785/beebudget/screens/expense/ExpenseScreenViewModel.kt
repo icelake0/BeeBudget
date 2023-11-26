@@ -1,10 +1,19 @@
 package com.C2479785.beebudget.screens.expense
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.C2479785.beebudget.R
 import com.C2479785.beebudget.models.Budget
 import com.C2479785.beebudget.models.Expense
 import com.google.firebase.Firebase
@@ -13,8 +22,10 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.File
 import java.time.LocalDate
 import java.util.UUID
+import java.util.concurrent.ExecutorService
 
 class ExpenseScreenViewModel: ViewModel() {
 
@@ -162,4 +173,18 @@ class ExpenseScreenViewModel: ViewModel() {
             _findingExpenseById.value = false
         }
     }
+
+    fun uploadPhotoToFireStore(
+        errorCallback: (message : String?) -> Unit = {},
+        successCallback: () -> Unit = {}
+    ) = viewModelScope.launch {
+        try {
+
+        } catch (ex: Exception){
+            errorCallback(ex.message)
+        } finally {
+//            _findingExpenseById.value = false
+        }
+    }
+
 }
