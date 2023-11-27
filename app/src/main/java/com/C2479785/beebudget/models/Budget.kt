@@ -4,7 +4,7 @@ import com.C2479785.beebudget.navigation.AppScreens
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import java.lang.IllegalArgumentException
 
-data class Budget(public val id: String?,
+data class Budget(public var id: String?,
                   public val userId: String?,
                   public val month: Int,
                   public val year: Int,

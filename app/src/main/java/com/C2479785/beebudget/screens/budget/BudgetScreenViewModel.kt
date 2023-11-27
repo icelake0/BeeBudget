@@ -3,6 +3,7 @@ package com.C2479785.beebudget.screens.budget
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -52,6 +53,7 @@ class BudgetScreenViewModel : ViewModel() {
         errorCallback: (message : String?) -> Unit = {},
         successCallback: () -> Unit
     ) = viewModelScope.launch {
+        Log.d("ice1", "Getting Month ${selectedMonth} Year ${years[selectedYear]}, User ${auth.currentUser?.uid}")
         try {
             if(_loading.value == false) {
                 _loading.value = true
@@ -61,19 +63,23 @@ class BudgetScreenViewModel : ViewModel() {
                     .collection("budget")
                     .whereEqualTo("user_id", userId)
                     .whereEqualTo("month", selectedMonth)
-                    .whereEqualTo("year", selectedYear)
+                    .whereEqualTo("year", years[selectedYear].toInt())
                     .get().await()
                 if(!budgets.isEmpty) {
+                    Log.d("ice1", "Not empty")
                      _currentBudget.value =  Budget.fromQueryDocumentSnapshot(budgets.first())
                 }
                 else {
+                    Log.d("ice1", "empty")
                     val budgets = FirebaseFirestore
                         .getInstance()
                         .collection("budget")
                         .whereEqualTo("user_id", userId)
                         .get().await()
                     if(!budgets.isEmpty) {
-                        _currentBudget.value =  Budget.fromQueryDocumentSnapshot(budgets.first())
+                        val latestBudget = Budget.fromQueryDocumentSnapshot(budgets.first())
+                        latestBudget.id = null
+                        _currentBudget.value = latestBudget
                     }
                     else{
                         _currentBudget.value =  Budget.default(
@@ -104,6 +110,7 @@ class BudgetScreenViewModel : ViewModel() {
         entertainment: Int,
         personalCare: Int,
         others: Int,
+        budgetId: String? = null,
         errorCallback: (message : String?) -> Unit = {},
         successCallback: () -> Unit
     ) = viewModelScope.launch{
@@ -111,23 +118,50 @@ class BudgetScreenViewModel : ViewModel() {
             if (_loading.value == false) {
                 _loading.value = true
                 val userId = auth.currentUser?.uid
-                val budget = Budget(
-                    id = UUID.randomUUID().toString(),
-                    userId = userId,
-                    month = month,
-                    year = years[year].toInt(),
-                    subscriptions = subscriptions,
-                    food = food,
-                    groceries = groceries,
-                    transportation = transportation,
-                    entertainment = entertainment,
-                    personalCare = personalCare,
-                    others = others
-                ).toMap()
-
-                FirebaseFirestore.getInstance().collection("budget")
-                    .add(budget)
-
+                if(budgetId !== null){
+                    val docToUpdate =  FirebaseFirestore
+                        .getInstance()
+                        .collection("budget")
+                        .whereEqualTo("id", budgetId)
+                        .get().await().first()
+                    FirebaseFirestore
+                        .getInstance()
+                        .collection("budget")
+                        .document(docToUpdate.id)
+                        .set(
+                            Budget(
+                                id = budgetId,
+                                userId = userId,
+                                month = month,
+                                year = years[year].toInt(),
+                                subscriptions = subscriptions,
+                                food = food,
+                                groceries = groceries,
+                                transportation = transportation,
+                                entertainment = entertainment,
+                                personalCare = personalCare,
+                                others = others
+                            ).toMap()
+                        ).await()
+                } else{
+                    val budget = Budget(
+                        id = UUID.randomUUID().toString(),
+                        userId = userId,
+                        month = month,
+                        year = years[year].toInt(),
+                        subscriptions = subscriptions,
+                        food = food,
+                        groceries = groceries,
+                        transportation = transportation,
+                        entertainment = entertainment,
+                        personalCare = personalCare,
+                        others = others
+                    ).toMap()
+                    FirebaseFirestore
+                        .getInstance()
+                        .collection("budget")
+                        .add(budget)
+                }
                 successCallback()
             }
         } catch (ex: Exception){
