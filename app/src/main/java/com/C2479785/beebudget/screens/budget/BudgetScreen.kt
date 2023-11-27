@@ -133,26 +133,26 @@ fun BudgetScreen(
             val currentBudget by viewModel.currentBudget.observeAsState(initial = null)
 
             val updateBudgetFormFields = fun () {
-//                selectedMonth.value = currentBudget!!.month
-//                selectedYear.value = viewModel.years.indexOf((currentBudget!!.year).toString())
-                subscriptions.value = currentBudget!!.subscriptions.toString()
-                food.value = currentBudget!!.food.toString()
-                groceries.value = currentBudget!!.groceries.toString()
-                transportation.value =currentBudget!!.transportation.toString()
-                entertainment.value =currentBudget!!.entertainment.toString()
-                personalCare.value = currentBudget!!.personalCare.toString()
-                others.value = currentBudget!!.others.toString()
-            }
-
-            if(!loadedBudget){
                 viewModel.geBudgetForForm(
                     selectedMonth.value,
                     selectedYear.value,
                     errorCallback = {message ->
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                }){
-                    updateBudgetFormFields()
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }){
+                    //selectedMonth.value = currentBudget!!.month
+                    //selectedYear.value = viewModel.years.indexOf((currentBudget!!.year).toString())
+                    subscriptions.value = currentBudget!!.subscriptions.toString()
+                    food.value = currentBudget!!.food.toString()
+                    groceries.value = currentBudget!!.groceries.toString()
+                    transportation.value =currentBudget!!.transportation.toString()
+                    entertainment.value =currentBudget!!.entertainment.toString()
+                    personalCare.value = currentBudget!!.personalCare.toString()
+                    others.value = currentBudget!!.others.toString()
                 }
+            }
+
+            if(!loadedBudget){
+                updateBudgetFormFields()
             }
 
             Surface( modifier = Modifier
@@ -278,6 +278,7 @@ fun BudgetScreen(
                                 entertainment = entertainment.value.toInt(),
                                 personalCare = personalCare.value.toInt(),
                                 others = others.value.toInt(),
+                                budgetId = currentBudget?.id ?: null,
                                 {message ->
                                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 },
