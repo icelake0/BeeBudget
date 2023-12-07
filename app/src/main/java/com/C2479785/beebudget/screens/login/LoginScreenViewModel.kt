@@ -34,7 +34,7 @@ class LoginScreenViewModel: ViewModel() {
                 successCallback()
             }
         } catch (ex: Exception){
-            errorCallback();
+            errorCallback()
         } finally {
             _loading.value = false
         }

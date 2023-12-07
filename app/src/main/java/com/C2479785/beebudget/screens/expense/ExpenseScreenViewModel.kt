@@ -101,7 +101,6 @@ class ExpenseScreenViewModel: ViewModel() {
         successCallback: () -> Unit
     ) = viewModelScope.launch {
         try {
-            Log.d("Loading Expenses","Loading Expenses")
             if(_loadingExpenses.value == false) {
                 _expenses.value = listOf<Expense>()
                 _loadingExpenses.value = true

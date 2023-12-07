@@ -53,7 +53,6 @@ class BudgetScreenViewModel : ViewModel() {
         errorCallback: (message : String?) -> Unit = {},
         successCallback: () -> Unit
     ) = viewModelScope.launch {
-        Log.d("ice1", "Getting Month ${selectedMonth} Year ${years[selectedYear]}, User ${auth.currentUser?.uid}")
         try {
             if(_loading.value == false) {
                 _loading.value = true
@@ -66,11 +65,10 @@ class BudgetScreenViewModel : ViewModel() {
                     .whereEqualTo("year", years[selectedYear].toInt())
                     .get().await()
                 if(!budgets.isEmpty) {
-                    Log.d("ice1", "Not empty")
                      _currentBudget.value =  Budget.fromQueryDocumentSnapshot(budgets.first())
+                    successCallback()
                 }
                 else {
-                    Log.d("ice1", "empty")
                     val budgets = FirebaseFirestore
                         .getInstance()
                         .collection("budget")
@@ -80,6 +78,7 @@ class BudgetScreenViewModel : ViewModel() {
                         val latestBudget = Budget.fromQueryDocumentSnapshot(budgets.first())
                         latestBudget.id = null
                         _currentBudget.value = latestBudget
+                        successCallback()
                     }
                     else{
                         _currentBudget.value =  Budget.default(
@@ -87,6 +86,7 @@ class BudgetScreenViewModel : ViewModel() {
                             month = selectedMonth,
                             year = selectedYear
                         )
+                        successCallback()
                     }
                 }
                 _loadedBudget.value = true

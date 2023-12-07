@@ -112,7 +112,6 @@ fun DashboardScreen(
                         options = viewModel.months,
                         currentSelection = selectedMonth,
                         onChange = {
-                            Log.d("Gbemileke", "Month Changed to ${selectedMonth.value}")
                             refreshData()
                         }
                     )
@@ -122,7 +121,6 @@ fun DashboardScreen(
                         options = viewModel.years,
                         currentSelection = selectedYear,
                         onChange = {
-                            Log.d("Gbemileke", "Year Changed to ${selectedYear.value}")
                             refreshData()
                         }
                     )
