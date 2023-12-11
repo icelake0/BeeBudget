@@ -82,7 +82,6 @@ fun BudgetScreen(
         ) {
             val context = LocalContext.current
 
-//            val validFloatNumberPattern = remember { Regex("^\\d*\\.\\d+|\\d+\\.\\d*$") }
             val validWholeNumberPattern = remember { Regex("^\\d+\$") }
 
             val selectedMonth = remember { mutableStateOf(LocalDate.now().month.value -1) }
@@ -139,8 +138,6 @@ fun BudgetScreen(
                     errorCallback = {message ->
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }){
-                    //selectedMonth.value = currentBudget!!.month
-                    //selectedYear.value = viewModel.years.indexOf((currentBudget!!.year).toString())
                     subscriptions.value = currentBudget!!.subscriptions.toString()
                     food.value = currentBudget!!.food.toString()
                     groceries.value = currentBudget!!.groceries.toString()
@@ -207,8 +204,6 @@ fun BudgetScreen(
                         leadingIcon = { Icon(Icons.Default.Refresh,  contentDescription = "", tint = PrimaryColor)},
                         onValueChange = {
                             if (it.isEmpty() || it.matches(validWholeNumberPattern)) {
-                                //TODO Implement support for penny budgeting
-                                //|| it.matches(validFloatNumberPattern)
                                 subscriptions.value = it
                             }
                         },
